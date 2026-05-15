@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import orderRoutes from "./routes/orderRoutes.js";
 
 const app = express();
 
@@ -9,5 +10,7 @@ app.use(express.json());
 app.get("/", (req, res) => {
   res.send("API running");
 });
+
+app.use("/api/orders", orderRoutes);
 
 export default app;
