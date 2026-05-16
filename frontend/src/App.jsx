@@ -1,23 +1,23 @@
-import { useEffect } from "react";
-import api from "./api/axios";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+
+import Dashboard from "./pages/Dashboard";
+import Orders from "./pages/Orders";
+import Products from "./pages/Products";
+import Settings from "./pages/Settings";
 
 function App() {
-  useEffect(() => {
-    fetchApi();
-  }, []);
-
-  const fetchApi = async () => {
-    try {
-      const response = await api.get("/");
-      console.log(response.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
   return (
-    <div>
-      <h1>Shopify Helper</h1>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Dashboard />} />
+
+        <Route path="/orders" element={<Orders />} />
+
+        <Route path="/products" element={<Products />} />
+
+        <Route path="/settings" element={<Settings />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
