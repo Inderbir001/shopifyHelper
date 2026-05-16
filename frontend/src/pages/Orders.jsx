@@ -1,11 +1,25 @@
+import MainLayout from "../components/layout/MainLayout";
 import OrderForm from "../components/orders/OrderForm";
 
 function Orders() {
   return (
-    <div>
-      <h1>Orders Page</h1>
-      <OrderForm></OrderForm>
-    </div>
+    <MainLayout>
+
+      <div className="mb-10">
+
+        <h1 className="text-5xl font-bold text-gray-800">
+          Orders
+        </h1>
+
+        <p className="text-gray-500 mt-3 text-lg">
+          Manage and create Shopify orders
+        </p>
+
+      </div>
+
+      <OrderForm />
+
+    </MainLayout>
   );
 }
 

@@ -1,14 +1,18 @@
 import { useState } from "react";
+
+import { Mail, Package, Hash, ShoppingBag } from "lucide-react";
+
 import { createOrderApi } from "../../api/orderApi";
-import { buildOrderPayload } from "../../utils/orderPayload";
 
 function OrderForm() {
   const [email, setEmail] = useState("");
   const [title, setTitle] = useState("");
-  const [quantity, setQuantity] = useState("");
-  const [price, setPrice] = useState("");
+  const [quantity, setQuantity] = useState(1);
+  const [price, setPrice] = useState(10);
 
   const [loading, setLoading] = useState(false);
+
+  const total = quantity * price;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -16,88 +20,135 @@ function OrderForm() {
     try {
       setLoading(true);
 
-      const orderData = buildOrderPayload({
+      const orderData = {
         email,
-        title,
-        quantity,
-        price,
-      });
+        line_items: [
+          {
+            title,
+            quantity: Number(quantity),
+            price: String(price),
+          },
+        ],
+      };
 
-      const response = await createOrderApi(orderData);
+      await createOrderApi(orderData);
 
-      console.log(response);
+      alert("Order Created Successfully");
 
-      alert("Order created successfully");
+      setEmail("");
+      setTitle("");
+      setQuantity(1);
+      setPrice(10);
     } catch (error) {
       console.log(error);
 
-      alert("Order creation failed");
+      alert("Failed To Create Order");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div>
-      <h2>Create Order</h2>
+    <div className="grid grid-cols-3 gap-8">
+      <div className="col-span-3 bg-white rounded-3xl shadow-sm border border-gray-500 p-8">
+        <div className="flex items-center gap-10 mb-8">
+          {/* <div className="w-16 h-16 rounded-2xl bg-purple-100 flex items-center justify-center">
+            <ShoppingBag className="text-purple-600" size={30} />
+          </div> */}
 
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Email</label>
+          <div>
+            <h2 className="text-4xl font-bold text-gray-800">
+              Create New Order
+            </h2>
 
-          <input
-            type="email"
-            placeholder="Customer Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
+            <p className="text-gray-500 mt-1">Fill order details below</p>
+          </div>
         </div>
 
-        <br />
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div>
+            <label className="font-semibold text-gray-700 block mb-3">
+              Customer Email
+            </label>
 
-        <div>
-          <label>Title</label>
+            <div className="relative">
+              <Mail className="absolute left-4 top-4 text-gray-400" size={20} />
 
-          <input
-            type="text"
-            placeholder="Product Title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-          />
-        </div>
+              <input
+                type="email"
+                placeholder="Enter customer email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full border-2 border-gray-200 focus:border-purple-500 outline-none rounded-2xl py-4 pl-12 pr-4 text-lg"
+              />
+            </div>
+          </div>
 
-        <br />
+          <div>
+            <label className="font-semibold text-gray-700 block mb-3">
+              Product Title
+            </label>
 
-        <div>
-          <label>Quantity</label>
+            <div className="relative">
+              <Package
+                className="absolute left-4 top-4 text-gray-400"
+                size={20}
+              />
 
-          <input
-            type="number"
-            placeholder="Quantity"
-            value={quantity}
-            onChange={(e) => setQuantity(e.target.value)}
-          />
-        </div>
+              <input
+                type="text"
+                placeholder="Enter product title"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                className="w-full border-2 border-gray-200 focus:border-purple-500 outline-none rounded-2xl py-4 pl-12 pr-4 text-lg"
+              />
+            </div>
+          </div>
 
-        <br />
+          <div className="grid grid-cols-2 gap-5">
+            <div>
+              <label className="font-semibold text-gray-700 block mb-3">
+                Quantity
+              </label>
 
-        <div>
-          <label>Price</label>
+              <div className="relative">
+                <Hash
+                  className="absolute left-4 top-4 text-gray-400"
+                  size={20}
+                />
 
-          <input
-            type="number"
-            placeholder="Price"
-            value={price}
-            onChange={(e) => setPrice(e.target.value)}
-          />
-        </div>
+                <input
+                  type="number"
+                  value={quantity}
+                  onChange={(e) => setQuantity(e.target.value)}
+                  className="w-full border-2 border-gray-200 focus:border-purple-500 outline-none rounded-2xl py-4 pl-12 pr-4 text-lg"
+                />
+              </div>
+            </div>
 
-        <br />
+            <div>
+              <label className="font-semibold text-gray-700 block mb-3">
+                Price
+              </label>
 
-        <button type="submit">
-          {loading ? "Creating..." : "Create Order"}
-        </button>
-      </form>
+              <input
+                type="number"
+                value={price}
+                onChange={(e) => setPrice(e.target.value)}
+                className="w-full border-2 border-gray-200 focus:border-purple-500 outline-none rounded-2xl py-4 px-4 text-lg"
+              />
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full mt-4 bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-5 rounded-2xl text-xl font-semibold hover:opacity-90 transition-all"
+          >
+            {loading ? "Creating Order..." : "Create Order"}
+          </button>
+        </form>
+      </div>
     </div>
   );
 }
