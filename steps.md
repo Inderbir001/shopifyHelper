@@ -1,22 +1,10 @@
-Perfect — that’s actually the best way to learn properly.
-
-You should build this project from absolute scratch manually so you understand:
-
-- backend architecture
-- React structure
-- APIs
-- routing
-- Shopify integration
-- environment handling
-- debugging
-
-I’ll give you the exact professional flow step-by-step.
+# SHOPIFY HELPER — FULL PROJECT SETUP GUIDE
 
 ---
 
 # PHASE 1 — CREATE PROJECT
 
-You already created:
+Create root folder:
 
 ```txt
 shopifyHelper/
@@ -24,9 +12,80 @@ shopifyHelper/
  └── frontend
 ```
 
-Good.
+Open project in VS Code.
 
-Now open terminal in VS Code.
+---
+
+# PHASE 1.5 — GITHUB SETUP
+
+---
+
+# STEP 1 — Initialize Git
+
+Inside root folder:
+
+```bash
+git init
+```
+
+---
+
+# STEP 2 — Create Root .gitignore
+
+Create:
+
+```txt
+shopifyHelper/.gitignore
+```
+
+Add:
+
+```txt
+node_modules
+.env
+dist
+coverage
+```
+
+---
+
+# STEP 3 — Add Files
+
+```bash
+git add .
+```
+
+---
+
+# STEP 4 — First Commit
+
+```bash
+git commit -m "Initial project setup"
+```
+
+---
+
+# STEP 5 — Rename Branch
+
+```bash
+git branch -M main
+```
+
+---
+
+# STEP 6 — Connect GitHub Repository
+
+```bash
+git remote add origin git@github.com:Inderbir001/shopifyHelper.git
+```
+
+---
+
+# STEP 7 — Push Code
+
+```bash
+git push -u origin main
+```
 
 ---
 
@@ -46,23 +105,17 @@ cd backend
 npm init -y
 ```
 
-This creates:
-
-```txt
-package.json
-```
-
 ---
 
 # STEP 2 — Install Packages
 
-## Main packages
+Main packages:
 
 ```bash
 npm install express cors dotenv axios
 ```
 
-## Dev package
+Dev package:
 
 ```bash
 npm install -D nodemon
@@ -71,8 +124,6 @@ npm install -D nodemon
 ---
 
 # STEP 3 — Create Backend Structure
-
-Inside backend create:
 
 ```txt
 backend/
@@ -95,9 +146,9 @@ backend/
 
 ---
 
-# STEP 4 — Create .gitignore
+# STEP 4 — Create Backend .gitignore
 
-Inside `.gitignore`
+Inside backend:
 
 ```txt
 node_modules
@@ -108,10 +159,6 @@ node_modules
 
 # STEP 5 — Setup package.json Scripts
 
-Open `package.json`
-
-Replace scripts with:
-
 ```json
 "scripts": {
   "start": "node src/server.js",
@@ -121,7 +168,35 @@ Replace scripts with:
 
 ---
 
-# STEP 6 — Create app.js
+# STEP 6 — Enable ES Modules
+
+Add in package.json:
+
+```json
+"type": "module"
+```
+
+---
+
+# IMPORTANT — ES MODULE IMPORT RULE
+
+ALL local imports must include `.js`
+
+✅ Correct:
+
+```js
+import app from "./app.js";
+```
+
+❌ Wrong:
+
+```js
+import app from "./app";
+```
+
+---
+
+# STEP 7 — Create app.js
 
 Path:
 
@@ -149,7 +224,7 @@ export default app;
 
 ---
 
-# STEP 7 — Create server.js
+# STEP 8 — Create server.js
 
 Path:
 
@@ -174,27 +249,6 @@ app.listen(PORT, () => {
 
 ---
 
-# STEP 8 — Enable ES Modules
-
-Open `package.json`
-
-Add:
-
-```json
-"type": "module"
-```
-
-Example:
-
-```json
-{
-  "name": "backend",
-  "version": "1.0.0",
-  "type": "module",
-```
-
----
-
 # STEP 9 — Create .env
 
 ```env
@@ -209,19 +263,13 @@ PORT=5000
 npm run dev
 ```
 
-You should see:
-
-```txt
-Server running on port 5000
-```
-
 Visit:
 
 ```txt
 http://localhost:5000
 ```
 
-You should see:
+Expected:
 
 ```txt
 API Running
@@ -231,11 +279,9 @@ API Running
 
 # PHASE 3 — SETUP FRONTEND
 
-Now open new terminal.
+Open new terminal.
 
----
-
-# STEP 1 — Go To Frontend
+Go inside frontend:
 
 ```bash
 cd frontend
@@ -243,7 +289,7 @@ cd frontend
 
 ---
 
-# STEP 2 — Create React App Using Vite
+# STEP 1 — Create React App Using Vite
 
 ```bash
 npm create vite@latest . -- --template react
@@ -251,18 +297,17 @@ npm create vite@latest . -- --template react
 
 IMPORTANT:
 
-- `.` means current folder
-- otherwise Vite creates nested frontend/frontend
+`.` means current folder.
 
 ---
 
-# STEP 3 — Install Packages
+# STEP 2 — Install Dependencies
 
 ```bash
 npm install
 ```
 
-Then install:
+Install frontend packages:
 
 ```bash
 npm install axios react-router-dom
@@ -270,13 +315,13 @@ npm install axios react-router-dom
 
 ---
 
-# STEP 4 — Start Frontend
+# STEP 3 — Run Frontend
 
 ```bash
 npm run dev
 ```
 
-You’ll get:
+Frontend runs on:
 
 ```txt
 http://localhost:5173
@@ -286,7 +331,7 @@ http://localhost:5173
 
 # PHASE 4 — CLEAN FRONTEND
 
-Delete unnecessary files:
+Delete:
 
 ```txt
 src/assets
@@ -295,7 +340,7 @@ src/App.css
 
 ---
 
-# STEP 2 — Replace main.jsx
+# STEP 1 — Replace main.jsx
 
 ```js
 import React from "react";
@@ -311,7 +356,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
 
 ---
 
-# STEP 3 — Replace App.jsx
+# STEP 2 — Replace App.jsx
 
 ```js
 function App() {
@@ -329,9 +374,7 @@ export default App;
 
 # PHASE 5 — CREATE FRONTEND STRUCTURE
 
-Inside `frontend/src`
-
-Create:
+Inside frontend/src create:
 
 ```txt
 src/
@@ -342,7 +385,7 @@ src/
 ├── services/
 ├── utils/
 ├── hooks/
-├── layouts/
+├── layout/
 ├── styles/
 │
 ├── App.jsx
@@ -377,13 +420,22 @@ export default api;
 
 ---
 
+# IMPORTANT — FRONTEND/BACKEND PORTS
+
+| Service         | Port |
+| --------------- | ---- |
+| React + Vite    | 5173 |
+| Express Backend | 5000 |
+
+---
+
 # STEP 2 — Test API Connection
 
 Update App.jsx
 
 ```js
 import { useEffect } from "react";
-import api from "./api/axios";
+import api from "./api/axios.js";
 
 function App() {
   useEffect(() => {
@@ -393,7 +445,9 @@ function App() {
   const fetchApi = async () => {
     try {
       const response = await api.get("/");
+
       console.log(response.data);
+
     } catch (error) {
       console.log(error);
     }
@@ -413,17 +467,17 @@ export default App;
 
 # PHASE 7 — CREATE ORDER MODULE
 
-NOW your actual project begins.
-
 ---
 
-# STEP 1 — Backend Route
+# STEP 1 — Create Backend Route
 
 Create:
 
 ```txt
 src/routes/orderRoutes.js
 ```
+
+Code:
 
 ```js
 import express from "express";
@@ -446,16 +500,6 @@ export default router;
 Update app.js
 
 ```js
-import orderRoutes from "./routes/orderRoutes.js";
-
-app.use("/api/orders", orderRoutes);
-```
-
----
-
-# Final app.js
-
-```js
 import express from "express";
 import cors from "cors";
 import orderRoutes from "./routes/orderRoutes.js";
@@ -476,7 +520,23 @@ export default app;
 
 ---
 
-# STEP 3 — Test In Browser
+# IMPORTANT — POST ROUTES CANNOT BE TESTED DIRECTLY IN BROWSER
+
+Typing URL in browser sends:
+
+```txt
+GET request
+```
+
+POST routes must be tested using:
+
+* Postman
+* Thunder Client
+* frontend axios requests
+
+---
+
+# STEP 3 — Test Route
 
 POST request:
 
@@ -488,15 +548,17 @@ http://localhost:5000/api/orders/create
 
 # PHASE 8 — SHOPIFY API CONNECTION
 
-NOW you integrate Shopify.
-
 ---
 
 # STEP 1 — Create Shopify Config
 
+Create:
+
 ```txt
 src/config/shopify.js
 ```
+
+Code:
 
 ```js
 import axios from "axios";
@@ -506,13 +568,40 @@ dotenv.config();
 
 const shopifyApi = axios.create({
   baseURL: `https://${process.env.SHOPIFY_STORE}/admin/api/${process.env.SHOPIFY_API_VERSION}`,
+
   headers: {
-    "X-Shopify-Access-Token": process.env.SHOPIFY_ACCESS_TOKEN,
+    "X-Shopify-Access-Token":
+      process.env.SHOPIFY_ACCESS_TOKEN,
+
     "Content-Type": "application/json",
   },
 });
 
 export default shopifyApi;
+```
+
+---
+
+# IMPORTANT — Shopify URL STRUCTURE
+
+Shopify Admin API format:
+
+```txt
+https://your-store.myshopify.com/admin/api/2025-01
+```
+
+Endpoints are appended:
+
+```txt
+/orders.json
+/graphql.json
+/products.json
+```
+
+Example:
+
+```js
+shopifyApi.post("/orders.json")
 ```
 
 ---
@@ -523,7 +612,9 @@ export default shopifyApi;
 PORT=5000
 
 SHOPIFY_STORE=your-store.myshopify.com
+
 SHOPIFY_ACCESS_TOKEN=shpat_xxxxx
+
 SHOPIFY_API_VERSION=2025-01
 ```
 
@@ -535,17 +626,26 @@ SHOPIFY_API_VERSION=2025-01
 
 # STEP 1 — Create Service
 
+Create:
+
 ```txt
 src/services/orderService.js
 ```
 
+Code:
+
 ```js
 import shopifyApi from "../config/shopify.js";
 
-export const createOrderService = async (orderData) => {
-  const response = await shopifyApi.post("/orders.json", {
-    order: orderData,
-  });
+export const createOrderService = async (
+  orderData
+) => {
+  const response = await shopifyApi.post(
+    "/orders.json",
+    {
+      order: orderData,
+    }
+  );
 
   return response.data;
 };
@@ -555,20 +655,31 @@ export const createOrderService = async (orderData) => {
 
 # STEP 2 — Create Controller
 
+Create:
+
 ```txt
 src/controllers/orderController.js
 ```
 
+Code:
+
 ```js
 import { createOrderService } from "../services/orderService.js";
 
-export const createOrder = async (req, res) => {
+export const createOrder = async (
+  req,
+  res
+) => {
   try {
-    const result = await createOrderService(req.body);
+    const result = await createOrderService(
+      req.body
+    );
 
     res.json(result);
+
   } catch (error) {
-    console.log(error.response.data);
+
+    console.log(error.response?.data);
 
     res.status(500).json({
       error: error.message,
@@ -594,124 +705,53 @@ export default router;
 
 ---
 
-# PHASE 10 — FRONTEND ORDER UI
+# IMPORTANT — REST API VS GRAPHQL API
 
-Now:
+Current implementation uses:
 
-- form
-- inputs
-- submit button
-- call backend
-- create order
+```txt
+REST Admin API
+```
 
-This becomes your next step after backend works.
+Correct REST field names:
+
+```txt
+line_items
+```
+
+Wrong GraphQL fields:
+
+```txt
+lineItems
+priceSet
+shopMoney
+```
+
+Endpoint used:
+
+```txt
+/orders.json
+```
 
 ---
 
-# IMPORTANT PROFESSIONAL RULES
+# STEP 4 — Test Using Postman
 
-ALWAYS follow:
+POST request body:
 
-```txt
-Route -> Controller -> Service -> Shopify API
-```
-
-NEVER:
-
-```txt
-Route -> Shopify directly
-```
-
----
-
-# WHAT YOU SHOULD BUILD NEXT
-
-After order creation:
-
-## Orders
-
-- get orders
-- update orders
-- cancel order
-
-## Products
-
-- create
-- update
-- delete
-- inventory
-
-## Customers
-
-- create
-- search
-
-## Store
-
-- themes
-- metafields
-- settings
-
-## Webhooks
-
-- order/create
-- product/update
-
----
-
-# MOST IMPORTANT THING
-
-DO NOT rush UI first.
-
-Professional flow:
-
-```txt
-1. Backend
-2. API working
-3. Postman testing
-4. THEN frontend
-```
-
-That is how real systems are built.
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-POSTMAN req body till here orders are getting created with this:
+```json
 {
-"line_items": [
-{
-"quantity": 1,
-"price": 10,
-"title": "Big Brown Bear Boots"
-
+  "line_items": [
+    {
+      "quantity": 1,
+      "price": 10,
+      "title": "Big Brown Bear Boots"
     }
-
-]
+  ]
 }
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-Perfect. Since your backend till Shopify order creation is done, now we build the UI professionally.
-
-We’ll do this properly:
-
-```txt
-Frontend UI Flow
-
-Form Inputs
-   ↓
-React State
-   ↓
-Axios API Call
-   ↓
-Backend Express API
-   ↓
-Shopify API
-   ↓
-Response
-   ↓
-Show Success/Error in UI
 ```
+
+Orders should now be created in Shopify.
 
 ---
 
@@ -719,7 +759,7 @@ Show Success/Error in UI
 
 ---
 
-# STEP 1 — Create Pages Folder Structure
+# STEP 1 — Create Pages
 
 Inside:
 
@@ -730,8 +770,8 @@ frontend/src/pages
 Create:
 
 ```txt
-Orders.jsx
 Dashboard.jsx
+Orders.jsx
 Products.jsx
 Settings.jsx
 ```
@@ -754,9 +794,7 @@ common/
 layout/
 ```
 
-Then inside `orders`
-
-Create:
+Inside orders:
 
 ```txt
 OrderForm.jsx
@@ -775,15 +813,50 @@ frontend/src/api/orderApi.js
 Code:
 
 ```js
-import api from "./axios";
+import api from "./axios.js";
 
-export const createOrderApi = async (orderData) => {
+export const createOrderApi = async (
+  orderData
+) => {
   const response = await api.post(
     "/api/orders/create",
     orderData
   );
 
   return response.data;
+};
+```
+
+---
+
+# PHASE 10.5 — SEPARATE ORDER PAYLOAD LOGIC
+
+Create:
+
+```txt
+frontend/src/utils/orderPayload.js
+```
+
+Code:
+
+```js
+export const buildOrderPayload = ({
+  email,
+  title,
+  quantity,
+  price,
+}) => {
+  return {
+    email,
+
+    line_items: [
+      {
+        title,
+        quantity: Number(quantity),
+        price: Number(price),
+      },
+    ],
+  };
 };
 ```
 
@@ -801,12 +874,16 @@ Code:
 
 ```jsx
 import { useState } from "react";
-import { createOrderApi } from "../../api/orderApi";
+
+import { createOrderApi } from "../../api/orderApi.js";
+
+import { buildOrderPayload } from "../../utils/orderPayload.js";
 
 function OrderForm() {
   const [email, setEmail] = useState("");
   const [title, setTitle] = useState("");
-  const [quantity, setQuantity] = useState(1);
+  const [quantity, setQuantity] = useState("");
+  const [price, setPrice] = useState("");
 
   const [loading, setLoading] = useState(false);
 
@@ -816,27 +893,29 @@ function OrderForm() {
     try {
       setLoading(true);
 
-      const orderData = {
+      const orderData = buildOrderPayload({
         email,
-        line_items: [
-          {
-            title,
-            quantity: Number(quantity),
-            price: "10.00",
-          },
-        ],
-      };
+        title,
+        quantity,
+        price,
+      });
 
-      const response = await createOrderApi(orderData);
+      const response = await createOrderApi(
+        orderData
+      );
 
       console.log(response);
 
-      alert("Order Created Successfully");
+      alert("Order created successfully");
+
     } catch (error) {
+
       console.log(error);
 
-      alert("Order Creation Failed");
+      alert("Order Creation failed");
+
     } finally {
+
       setLoading(false);
     }
   };
@@ -853,20 +932,21 @@ function OrderForm() {
             type="email"
             placeholder="Customer Email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) =>
+              setEmail(e.target.value)
+            }
           />
         </div>
 
-        <br />
-
         <div>
-          <label>Product Title</label>
+          <label>Title</label>
 
           <input
             type="text"
-            placeholder="Product Title"
             value={title}
-            onChange={(e) => setTitle(e.target.value)}
+            onChange={(e) =>
+              setTitle(e.target.value)
+            }
           />
         </div>
 
@@ -878,14 +958,32 @@ function OrderForm() {
           <input
             type="number"
             value={quantity}
-            onChange={(e) => setQuantity(e.target.value)}
+            onChange={(e) =>
+              setQuantity(e.target.value)
+            }
+          />
+        </div>
+
+        <br />
+
+        <div>
+          <label>Price</label>
+
+          <input
+            type="number"
+            value={price}
+            onChange={(e) =>
+              setPrice(e.target.value)
+            }
           />
         </div>
 
         <br />
 
         <button type="submit">
-          {loading ? "Creating..." : "Create Order"}
+          {loading
+            ? "Creating..."
+            : "Create Order"}
         </button>
       </form>
     </div>
@@ -898,14 +996,6 @@ export default OrderForm;
 ---
 
 # STEP 5 — Create Orders Page
-
-Create:
-
-```txt
-frontend/src/pages/Orders.jsx
-```
-
-Code:
 
 ```jsx
 import OrderForm from "../components/orders/OrderForm";
@@ -927,17 +1017,7 @@ export default Orders;
 
 # STEP 6 — Setup React Router
 
-Install if not installed:
-
-```bash
-npm install react-router-dom
-```
-
----
-
-# STEP 7 — Update App.jsx
-
-Replace everything:
+Update App.jsx
 
 ```jsx
 import { BrowserRouter, Routes, Route } from "react-router-dom";
@@ -951,13 +1031,25 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Dashboard />} />
+        <Route
+          path="/"
+          element={<Dashboard />}
+        />
 
-        <Route path="/orders" element={<Orders />} />
+        <Route
+          path="/orders"
+          element={<Orders />}
+        />
 
-        <Route path="/products" element={<Products />} />
+        <Route
+          path="/products"
+          element={<Products />}
+        />
 
-        <Route path="/settings" element={<Settings />} />
+        <Route
+          path="/settings"
+          element={<Settings />}
+        />
       </Routes>
     </BrowserRouter>
   );
@@ -968,9 +1060,9 @@ export default App;
 
 ---
 
-# STEP 8 — Create Temporary Pages
+# STEP 7 — Create Temporary Pages
 
-## Dashboard.jsx
+Dashboard.jsx
 
 ```jsx
 function Dashboard() {
@@ -980,9 +1072,7 @@ function Dashboard() {
 export default Dashboard;
 ```
 
----
-
-## Products.jsx
+Products.jsx
 
 ```jsx
 function Products() {
@@ -992,9 +1082,7 @@ function Products() {
 export default Products;
 ```
 
----
-
-## Settings.jsx
+Settings.jsx
 
 ```jsx
 function Settings() {
@@ -1006,9 +1094,7 @@ export default Settings;
 
 ---
 
-# STEP 9 — Start Frontend
-
-Run:
+# STEP 8 — Start Frontend
 
 ```bash
 npm run dev
@@ -1020,145 +1106,43 @@ Open:
 http://localhost:5173/orders
 ```
 
-You should now see:
-
-* Email input
-* Product title
-* Quantity
-* Create button
-
 ---
 
-# STEP 10 — TEST COMPLETE FLOW
-
-Now test:
+# COMPLETE APPLICATION FLOW
 
 ```txt
-Frontend
-→ Backend
-→ Shopify
-→ Response
-```
-
-Fill:
-
-* email
-* title
-* quantity
-
-Click:
-
-```txt
-Create Order
-```
-
----
-
-# EXPECTED RESULT
-
-In:
-
-* browser console
-* Shopify Admin → Orders
-
-You should see newly created order.
-
----
-
-# IF YOU GET CORS ERROR
-
-Backend already has:
-
-```js
-app.use(cors());
-```
-
-So mostly okay.
-
----
-
-# IF ORDER DOES NOT CREATE
-
-Check backend terminal:
-
-```txt
-error.response.data
-```
-
-Most likely:
-
-* invalid access token
-* invalid API version
-* wrong store name
-* invalid order payload
-
----
-
-# NEXT PROFESSIONAL IMPROVEMENTS
-
-After this works we’ll do:
-
-```txt
-1. Better UI
-2. Navbar
-3. Sidebar
-4. Tailwind
-5. Toast notifications
-6. Form validation
-7. Loading spinners
-8. Order table
-9. Product management
-10. Reusable components
-```
-
-That’s where your app starts looking like a real SaaS admin panel.
-
-Excellent. Now your app has:
-
-React UI
+React Form
    ↓
-Express Backend
+Axios API Call
+   ↓
+Express Route
+   ↓
+Controller
+   ↓
+Service
    ↓
 Shopify API
+   ↓
+Response
+   ↓
+Frontend UI
+```
 
-Now we move from:
+---
 
-“working project”
-to
-“professional scalable app”
-NEXT PHASE — PROFESSIONAL UI FOUNDATION
-
-DO THIS BEFORE adding more Shopify features.
-
-Why?
-
-Because later:
-
-products
-customers
-inventory
-discounts
-analytics
-
-will become messy if structure is bad.
-
-PHASE 11 — CREATE PROFESSIONAL LAYOUT
-
-We’ll build:
-
-Sidebar
-Navbar
-Page Layout
-Reusable UI Structure
-STEP 1 — Install Tailwind CSS
+# PHASE 11 — INSTALL TAILWIND CSS
 
 Inside frontend:
 
+```bash
 npm install tailwindcss @tailwindcss/vite
-STEP 2 — Update vite.config.js
+```
 
-Replace with:
+---
 
+# STEP 1 — Update vite.config.js
+
+```js
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
@@ -1166,43 +1150,67 @@ import tailwindcss from "@tailwindcss/vite";
 export default defineConfig({
   plugins: [react(), tailwindcss()],
 });
-STEP 3 — Update src/index.css
+```
+
+---
+
+# STEP 2 — Create index.css
 
 Create:
 
+```txt
 src/index.css
+```
 
 Add:
 
+```css
 @import "tailwindcss";
-STEP 4 — Import index.css
+```
+
+---
+
+# STEP 3 — Import index.css
 
 Update main.jsx
 
+```js
 import React from "react";
 import ReactDOM from "react-dom/client";
+
 import App from "./App";
 import "./index.css";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <App />
-  </React.StrictMode>
+  </React.StrictMode>,
 );
-PHASE 12 — CREATE LAYOUT COMPONENTS
-STEP 1 — Create Layout Files
+```
 
-Inside:
+---
 
+# PHASE 12 — CREATE LAYOUT SYSTEM
+
+Create inside:
+
+```txt
 src/components/layout
+```
 
-Create:
+Files:
 
+```txt
 Sidebar.jsx
 Navbar.jsx
 MainLayout.jsx
-STEP 2 — Create Sidebar
-Sidebar.jsx
+```
+
+---
+
+# STEP 1 — Sidebar.jsx
+
+```jsx
 import { Link } from "react-router-dom";
 
 function Sidebar() {
@@ -1226,8 +1234,13 @@ function Sidebar() {
 }
 
 export default Sidebar;
-STEP 3 — Create Navbar
-Navbar.jsx
+```
+
+---
+
+# STEP 2 — Navbar.jsx
+
+```jsx
 function Navbar() {
   return (
     <div className="h-16 bg-white shadow flex items-center px-6">
@@ -1239,8 +1252,13 @@ function Navbar() {
 }
 
 export default Navbar;
-STEP 4 — Create Main Layout
-MainLayout.jsx
+```
+
+---
+
+# STEP 3 — MainLayout.jsx
+
+```jsx
 import Sidebar from "./Sidebar";
 import Navbar from "./Navbar";
 
@@ -1261,10 +1279,19 @@ function MainLayout({ children }) {
 }
 
 export default MainLayout;
-PHASE 13 — USE LAYOUT
-STEP 1 — Update Orders Page
-Orders.jsx
+```
+
+---
+
+# PHASE 13 — USE LAYOUT
+
+Update pages to use MainLayout.
+
+Example Orders.jsx
+
+```jsx
 import MainLayout from "../components/layout/MainLayout";
+
 import OrderForm from "../components/orders/OrderForm";
 
 function Orders() {
@@ -1280,175 +1307,19 @@ function Orders() {
 }
 
 export default Orders;
-STEP 2 — Update Dashboard
-import MainLayout from "../components/layout/MainLayout";
+```
 
-function Dashboard() {
-  return (
-    <MainLayout>
-      <h1 className="text-3xl font-bold">
-        Dashboard
-      </h1>
-    </MainLayout>
-  );
-}
+---
 
-export default Dashboard;
-STEP 3 — Update Products
-import MainLayout from "../components/layout/MainLayout";
+# PHASE 14 — IMPROVE ORDER FORM UI
 
-function Products() {
-  return (
-    <MainLayout>
-      <h1 className="text-3xl font-bold">
-        Products
-      </h1>
-    </MainLayout>
-  );
-}
+Add Tailwind classes to OrderForm.jsx for professional UI styling.
 
-export default Products;
-STEP 4 — Update Settings
-import MainLayout from "../components/layout/MainLayout";
+---
 
-function Settings() {
-  return (
-    <MainLayout>
-      <h1 className="text-3xl font-bold">
-        Settings
-      </h1>
-    </MainLayout>
-  );
-}
+# NEXT FEATURES
 
-export default Settings;
-PHASE 14 — IMPROVE ORDER FORM UI
-
-Replace OrderForm.jsx with:
-
-import { useState } from "react";
-import { createOrderApi } from "../../api/orderApi";
-
-function OrderForm() {
-  const [email, setEmail] = useState("");
-  const [title, setTitle] = useState("");
-  const [quantity, setQuantity] = useState(1);
-
-  const [loading, setLoading] = useState(false);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    try {
-      setLoading(true);
-
-      const orderData = {
-        email,
-        line_items: [
-          {
-            title,
-            quantity: Number(quantity),
-            price: "10.00",
-          },
-        ],
-      };
-
-      await createOrderApi(orderData);
-
-      alert("Order Created");
-
-      setEmail("");
-      setTitle("");
-      setQuantity(1);
-
-    } catch (error) {
-      console.log(error);
-
-      alert("Failed To Create Order");
-
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  return (
-    <div className="bg-white p-6 rounded-lg shadow w-full max-w-xl">
-      <h2 className="text-2xl font-bold mb-6">
-        Create Order
-      </h2>
-
-      <form
-        onSubmit={handleSubmit}
-        className="flex flex-col gap-4"
-      >
-        <div>
-          <label className="block mb-2 font-medium">
-            Customer Email
-          </label>
-
-          <input
-            type="email"
-            placeholder="Enter Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full border p-3 rounded"
-          />
-        </div>
-
-        <div>
-          <label className="block mb-2 font-medium">
-            Product Title
-          </label>
-
-          <input
-            type="text"
-            placeholder="Enter Product"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            className="w-full border p-3 rounded"
-          />
-        </div>
-
-        <div>
-          <label className="block mb-2 font-medium">
-            Quantity
-          </label>
-
-          <input
-            type="number"
-            value={quantity}
-            onChange={(e) => setQuantity(e.target.value)}
-            className="w-full border p-3 rounded"
-          />
-        </div>
-
-        <button
-          type="submit"
-          disabled={loading}
-          className="bg-black text-white p-3 rounded hover:bg-gray-800"
-        >
-          {loading ? "Creating..." : "Create Order"}
-        </button>
-      </form>
-    </div>
-  );
-}
-
-export default OrderForm;
-NOW YOUR APP LOOKS LIKE A REAL ADMIN PANEL
-
-You now have:
-
-Sidebar
-Navbar
-Layout system
-Tailwind
-Professional structure
-NEXT BIG STEP
-
-Now you’re ready for REAL Shopify operations.
-
-Recommended order:
+Recommended next steps:
 
 1. Get Orders
 2. Orders Table
@@ -1456,13 +1327,7 @@ Recommended order:
 4. Product Management
 5. Search Orders
 6. Pagination
-7. Dashboard cards
-8. Toast notifications
+7. Dashboard Cards
+8. Toast Notifications
 9. Authentication
 10. Webhooks
-
-Next you should build:
-
-GET ORDERS + ORDERS TABLE
-
-because now your app becomes actually useful.

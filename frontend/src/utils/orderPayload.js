@@ -1,97 +1,98 @@
+import { faker } from "@faker-js/faker";
+
 export const buildOrderPayload = ({
-  email,
-  title,
   quantity,
   price,
+  productId,
+  variantId,
+  firstName = faker.person.firstName(),
+  lastName = faker.person.lastName(),
+  phone = faker.helpers.arrayElement([
+    "+14155552671",
+    "+14155552672",
+    "+14155552673",
+    "+14155552674",
+    "+14155552675",
+    "+14155552676",
+    "+14155552677",
+    "+14155552678",
+    "+14155552679",
+    "+14155552613",
+    "+14155552623",
+    "+14155552633",
+    "+14155552653",
+    "+14155552673",
+  ]),
+  email = faker.internet.email(),
+  address1 = "121 Evelyn Rd",
+  address2 = "",
+  city = "Needham Heights",
+  province = "Massachusetts",
+  country = "United States",
+  zip = "02494",
+  company = faker.company.name(),
+  currency = "USD",
+  shippingPrice = price,
+  vendor = faker.company.name(),
+  tags = faker.helpers
+    .arrayElements(
+      [
+        "shopify-helper",
+        "test-order",
+        "sale",
+        "featured",
+        "new",
+        "premium",
+        "bestseller",
+        "summer",
+        "winter",
+        "trending",
+      ],
+      { min: 2, max: 5 },
+    )
+    .join(","),
+  note = "Created from Shopify Helper",
 }) => {
   return {
     email,
-
+    phone,
+    currency,
     financial_status: "paid",
-
-    fulfillment_status: null,
-
-    send_receipt: true,
-
-    currency: "EUR",
-
-    note: "Created from Shopify Helper",
-
-    tags: "shopify-helper,test-order",
-
-    customer: {
-      first_name: "Inder",
-      last_name: "Singh",
-      email,
-    },
+    note,
+    tags,
+    source_name: "shopify-helper",
 
     billing_address: {
-      first_name: "Inder",
-      last_name: "Singh",
-      address1: "Street 1",
-      city: "Bangalore",
-      province: "Karnataka",
-      country: "India",
-      zip: "560001",
-      phone: "9999999999",
+      first_name: firstName,
+      last_name: lastName,
+      company,
+      address1,
+      address2,
+      city,
+      province,
+      country,
+      zip,
+      phone,
     },
 
     shipping_address: {
-      first_name: "Inder",
-      last_name: "Singh",
-      address1: "Street 1",
-      city: "Bangalore",
-      province: "Karnataka",
-      country: "India",
-      zip: "560001",
-      phone: "9999999999",
+      first_name: firstName,
+      last_name: lastName,
+      company,
+      address1,
+      address2,
+      city,
+      province,
+      country,
+      zip,
+      phone,
     },
 
     line_items: [
       {
-        title,
+        variant_id: Number(variantId),
         quantity: Number(quantity),
         price: Number(price),
-      },
-    ],
-
-    shipping_lines: [
-      {
-        title: "Standard Shipping",
-        price: "10.00",
-        code: "STANDARD",
-      },
-    ],
-
-    tax_lines: [
-      {
-        price: "5.00",
-        rate: 0.05,
-        title: "GST",
-      },
-    ],
-
-    transactions: [
-      {
-        kind: "sale",
-        status: "success",
-        amount: Number(price) * Number(quantity),
-      },
-    ],
-
-    note_attributes: [
-      {
-        name: "source",
-        value: "shopify-helper-app",
-      },
-    ],
-
-    metafields: [
-      {
-        namespace: "custom",
-        key: "test_key",
-        value: "test_value",
-        type: "single_line_text_field",
       },
     ],
   };
