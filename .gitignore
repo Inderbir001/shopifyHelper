@@ -2,3 +2,6 @@ node_modules
 .env
 dist
 coverage
+backend/playwright-user-data
+backend/test-results
+backend/auth-partner.json
