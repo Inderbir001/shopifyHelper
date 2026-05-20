@@ -1,0 +1,13 @@
+2026/05/20-17:49:20.125 475ce Reusing MANIFEST /home/inderbir-singh/Documents/shopifyHelper/backend/playwright-user-data/Default/IndexedDB/https_admin.shopify.com_0.indexeddb.leveldb/MANIFEST-000001
+2026/05/20-17:49:20.125 475ce Recovering log #42
+2026/05/20-17:49:20.127 475ce Reusing old log /home/inderbir-singh/Documents/shopifyHelper/backend/playwright-user-data/Default/IndexedDB/https_admin.shopify.com_0.indexeddb.leveldb/000042.log 
+2026/05/20-17:49:20.131 475d1 Level-0 table #47: started
+2026/05/20-17:49:20.134 475d1 Level-0 table #47: 84491 bytes OK
+2026/05/20-17:49:20.135 475d1 Delete type=0 #42
+2026/05/20-17:49:20.136 475ce Manual compaction at level-0 from '\x00\x0c\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00\x0d\x00\x00\x00' @ 0 : 0; will stop at '\x00\x0c\x03\x02\x01;\x00t\x00e\x00s\x00t\x00s\x00t\x00o\x00r\x00e\x001\x007\x007\x009\x002\x007\x006\x003\x000\x004\x004\x008\x002\x00-\x00-\x00/\x00a\x00p\x00i\x00/\x00s\x00h\x00o\x00p\x00i\x00f\x00y\x00/\x00t\x00e\x00s\x00t\x00s\x00t\x00o\x00r\x00e\x001\x007\x007\x009\x002\x007\x006\x003\x000\x004\x004\x008\x002' @ 5442 : 1
+2026/05/20-17:49:20.136 475ce Compacting 1@0 + 1@1 files
+2026/05/20-17:49:20.137 475ce Generated table #48@0: 218 keys, 2209 bytes
+2026/05/20-17:49:20.137 475ce Compacted 1@0 + 1@1 files => 2209 bytes
+2026/05/20-17:49:20.139 475ce compacted to: files[ 0 1 1 0 0 0 0 ]
+2026/05/20-17:49:20.139 475ce Delete type=2 #47
+2026/05/20-17:49:20.139 475ce Manual compaction at level-0 from '\x00\x0c\x03\x02\x01;\x00t\x00e\x00s\x00t\x00s\x00t\x00o\x00r\x00e\x001\x007\x007\x009\x002\x007\x006\x003\x000\x004\x004\x008\x002\x00-\x00-\x00/\x00a\x00p\x00i\x00/\x00s\x00h\x00o\x00p\x00i\x00f\x00y\x00/\x00t\x00e\x00s\x00t\x00s\x00t\x00o\x00r\x00e\x001\x007\x007\x009\x002\x007\x006\x003\x000\x004\x004\x008\x002' @ 5442 : 1 .. '\x00\x0d\x00\x00\x00' @ 0 : 0; will stop at (end)
