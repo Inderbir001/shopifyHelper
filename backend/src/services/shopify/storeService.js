@@ -159,7 +159,7 @@ export async function createStoreAutomation(storeData) {
   // Store Name
   // -----------------------------------
 
-  storeName = `teststore${Date.now()}`;
+  storeName = storeData.storeName;
 
   const nameField = page1.locator('input[name="storeName"]');
 
@@ -453,8 +453,22 @@ export async function createStoreAutomation(storeData) {
 
   const partnerUrl = page.url();
 
-  const storeUrl = `https://${storeName}.myshopify.com`;
+  // -----------------------------------
+  // GET REAL STORE HANDLE
+  // -----------------------------------
 
+  const currentAdminUrl = page1.url();
+
+  console.log(currentAdminUrl);
+
+  // Example:
+  // https://admin.shopify.com/store/new-testing-store-hrcuth7x
+
+  const realStoreHandle = currentAdminUrl.split("/store/")[1]?.split("/")[0];
+
+  const storeUrl = `${realStoreHandle}.myshopify.com`;
+
+  console.log("REAL STORE URL:", storeUrl);
   const appUrl = `https://admin.shopify.com/store/${storeName}/apps/mcsl-qa`;
 
   // -----------------------------------
@@ -466,7 +480,7 @@ export async function createStoreAutomation(storeData) {
   fs.writeFileSync(
     tempEnvPath,
     `
-SHOPIFY_STORE=${storeName}.myshopify.com
+SHOPIFY_STORE=${storeUrl}
 SHOPIFY_ACCESS_TOKEN=${shpat}
 SHOPIFY_API_VERSION=2023-01
 `,
@@ -478,11 +492,7 @@ SHOPIFY_API_VERSION=2023-01
   // IMPORT PRODUCTS
   // -----------------------------------
 
-  await importProductsFromCSV(
-    "./csv/products.csv",
-    `${storeName}.myshopify.com`,
-    shpat,
-  );
+  await importProductsFromCSV("./csv/products.csv", storeUrl, shpat);
 
   console.log("✅ PRODUCTS IMPORTED INTO NEW STORE");
 

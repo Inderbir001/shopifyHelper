@@ -5,6 +5,7 @@ import {
   Users,
   BarChart3,
   Settings,
+  Store,
 } from "lucide-react";
 
 import { Link, useLocation } from "react-router-dom";
@@ -22,6 +23,11 @@ function Sidebar() {
       name: "Orders",
       path: "/orders",
       icon: <ShoppingBag size={20} />,
+    },
+    {
+      name: "Create Store",
+      path: "/create-store",
+      icon: <Store size={20} />,
     },
     {
       name: "Products",

@@ -4,6 +4,7 @@ import Dashboard from "./pages/Dashboard";
 import Orders from "./pages/Orders";
 import Products from "./pages/Products";
 import Settings from "./pages/Settings";
+import CreateStore from "./pages/CreateStore";
 
 function App() {
   return (
@@ -16,6 +17,8 @@ function App() {
         <Route path="/products" element={<Products />} />
 
         <Route path="/settings" element={<Settings />} />
+
+        <Route path="/create-store" element={<CreateStore />} />
       </Routes>
     </BrowserRouter>
   );
