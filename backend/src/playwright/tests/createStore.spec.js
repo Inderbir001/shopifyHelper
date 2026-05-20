@@ -1,5 +1,6 @@
 import { test, chromium } from "@playwright/test";
 import fs from "fs";
+import { importProductsFromCSV } from "../../services/shopify/importCsvService.js";
 import dotenv from "dotenv";
 dotenv.config();
 test.describe("Shopify Partner Store Creation", () => {
@@ -333,11 +334,6 @@ test.describe("Shopify Partner Store Creation", () => {
     // ENABLE ALL CHECKBOXES
     // -----------------------------------
 
-    // Your uploaded html confirms all
-    // checkboxes use:
-    // input[type="checkbox"]
-    // -----------------------------------
-
     const allCheckboxes = page1.locator('input[type="checkbox"]');
 
     const checkboxCount = await allCheckboxes.count();
@@ -427,45 +423,76 @@ test.describe("Shopify Partner Store Creation", () => {
     await page1.waitForTimeout(5000);
 
     // -----------------------------------
-    // REVEAL TOKEN
+    // REVEAL TOKEN + RETRY
     // -----------------------------------
-
-    await page1.evaluate(() => {
-      const internalButtons = document.querySelectorAll("s-internal-button");
-
-      for (const btn of internalButtons) {
-        if (btn.innerText.includes("Reveal token once")) {
-          const shadow = btn.shadowRoot;
-
-          const realButton = shadow?.querySelector("button");
-
-          realButton?.click();
-
-          break;
-        }
-      }
-    });
-
-    await page1.waitForTimeout(3000);
-
-    // -----------------------------------
-    // GET ADMIN API TOKEN
-    // -----------------------------------
-
-    await page1.waitForTimeout(3000);
-
-    const textInputs = page1.locator('input[type="text"]');
-
-    const inputCount = await textInputs.count();
 
     let shpat = "";
 
-    for (let i = 0; i < inputCount; i++) {
-      const value = await textInputs.nth(i).inputValue();
-      if (value && value.startsWith("shpat_")) {
-        shpat = value;
+    for (let attempt = 1; attempt <= 5; attempt++) {
+      console.log(`Trying to reveal token - Attempt ${attempt}`);
+
+      // -----------------------------------
+      // CLICK REVEAL TOKEN
+      // -----------------------------------
+
+      await page1.evaluate(() => {
+        const internalButtons = document.querySelectorAll("s-internal-button");
+
+        for (const btn of internalButtons) {
+          if (btn.innerText.includes("Reveal token once")) {
+            const shadow = btn.shadowRoot;
+
+            const realButton = shadow?.querySelector("button");
+
+            realButton?.click();
+
+            break;
+          }
+        }
+      });
+
+      await page1.waitForTimeout(3000);
+
+      // -----------------------------------
+      // TRY TO GET TOKEN
+      // -----------------------------------
+
+      const textInputs = page1.locator('input[type="text"]');
+
+      const inputCount = await textInputs.count();
+
+      for (let i = 0; i < inputCount; i++) {
+        const value = await textInputs.nth(i).inputValue();
+
+        console.log(`INPUT ${i}: ${value}`);
+
+        if (value && value.startsWith("shpat_")) {
+          shpat = value;
+          break;
+        }
+      }
+
+      // -----------------------------------
+      // SUCCESS
+      // -----------------------------------
+
+      if (shpat && shpat.startsWith("shpat_")) {
+        console.log("✅ Token captured successfully");
+
         break;
       }
+
+      console.log("❌ Token empty, retrying...");
+
+      await page1.waitForTimeout(2000);
+    }
+
+    // -----------------------------------
+    // FINAL VALIDATION
+    // -----------------------------------
+
+    if (!shpat || !shpat.startsWith("shpat_")) {
+      throw new Error("Failed to capture Shopify token after retries");
     }
 
     console.log("=================================");
@@ -504,5 +531,45 @@ test.describe("Shopify Partner Store Creation", () => {
     console.log(`SHOPIFY_ACCESS_TOKEN = ${shpat}`);
 
     console.log("=================================\n");
+
+    // -----------------------------------
+    // TEMP ENV FILE
+    // -----------------------------------
+
+    const tempEnvPath = `./temp-store-env/${storeName}.env`;
+
+    fs.writeFileSync(
+      tempEnvPath,
+
+      `
+SHOPIFY_STORE=${storeName}.myshopify.com
+SHOPIFY_ACCESS_TOKEN=${shpat}
+SHOPIFY_API_VERSION=2023-01
+`,
+    );
+
+    console.log(`✅ Temp env created: ${tempEnvPath}`);
+
+    // -----------------------------------
+    // IMPORT PRODUCTS
+    // -----------------------------------
+
+    await importProductsFromCSV(
+      "./csv/products.csv",
+
+      `${storeName}.myshopify.com`,
+
+      shpat,
+    );
+
+    console.log("✅ PRODUCTS IMPORTED INTO NEW STORE");
+
+    // -----------------------------------
+    // DELETE TEMP ENV
+    // -----------------------------------
+
+    fs.unlinkSync(tempEnvPath);
+
+    console.log("✅ Temp env deleted");
   });
 });

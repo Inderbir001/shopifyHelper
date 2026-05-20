@@ -447,7 +447,6 @@ function App() {
       const response = await api.get("/");
 
       console.log(response.data);
-
     } catch (error) {
       console.log(error);
     }
@@ -530,9 +529,9 @@ GET request
 
 POST routes must be tested using:
 
-* Postman
-* Thunder Client
-* frontend axios requests
+- Postman
+- Thunder Client
+- frontend axios requests
 
 ---
 
@@ -570,8 +569,7 @@ const shopifyApi = axios.create({
   baseURL: `https://${process.env.SHOPIFY_STORE}/admin/api/${process.env.SHOPIFY_API_VERSION}`,
 
   headers: {
-    "X-Shopify-Access-Token":
-      process.env.SHOPIFY_ACCESS_TOKEN,
+    "X-Shopify-Access-Token": process.env.SHOPIFY_ACCESS_TOKEN,
 
     "Content-Type": "application/json",
   },
@@ -601,7 +599,7 @@ Endpoints are appended:
 Example:
 
 ```js
-shopifyApi.post("/orders.json")
+shopifyApi.post("/orders.json");
 ```
 
 ---
@@ -637,15 +635,10 @@ Code:
 ```js
 import shopifyApi from "../config/shopify.js";
 
-export const createOrderService = async (
-  orderData
-) => {
-  const response = await shopifyApi.post(
-    "/orders.json",
-    {
-      order: orderData,
-    }
-  );
+export const createOrderService = async (orderData) => {
+  const response = await shopifyApi.post("/orders.json", {
+    order: orderData,
+  });
 
   return response.data;
 };
@@ -666,19 +659,12 @@ Code:
 ```js
 import { createOrderService } from "../services/orderService.js";
 
-export const createOrder = async (
-  req,
-  res
-) => {
+export const createOrder = async (req, res) => {
   try {
-    const result = await createOrderService(
-      req.body
-    );
+    const result = await createOrderService(req.body);
 
     res.json(result);
-
   } catch (error) {
-
     console.log(error.response?.data);
 
     res.status(500).json({
@@ -815,13 +801,8 @@ Code:
 ```js
 import api from "./axios.js";
 
-export const createOrderApi = async (
-  orderData
-) => {
-  const response = await api.post(
-    "/api/orders/create",
-    orderData
-  );
+export const createOrderApi = async (orderData) => {
+  const response = await api.post("/api/orders/create", orderData);
 
   return response.data;
 };
@@ -840,12 +821,7 @@ frontend/src/utils/orderPayload.js
 Code:
 
 ```js
-export const buildOrderPayload = ({
-  email,
-  title,
-  quantity,
-  price,
-}) => {
+export const buildOrderPayload = ({ email, title, quantity, price }) => {
   return {
     email,
 
@@ -900,22 +876,16 @@ function OrderForm() {
         price,
       });
 
-      const response = await createOrderApi(
-        orderData
-      );
+      const response = await createOrderApi(orderData);
 
       console.log(response);
 
       alert("Order created successfully");
-
     } catch (error) {
-
       console.log(error);
 
       alert("Order Creation failed");
-
     } finally {
-
       setLoading(false);
     }
   };
@@ -932,9 +902,7 @@ function OrderForm() {
             type="email"
             placeholder="Customer Email"
             value={email}
-            onChange={(e) =>
-              setEmail(e.target.value)
-            }
+            onChange={(e) => setEmail(e.target.value)}
           />
         </div>
 
@@ -944,9 +912,7 @@ function OrderForm() {
           <input
             type="text"
             value={title}
-            onChange={(e) =>
-              setTitle(e.target.value)
-            }
+            onChange={(e) => setTitle(e.target.value)}
           />
         </div>
 
@@ -958,9 +924,7 @@ function OrderForm() {
           <input
             type="number"
             value={quantity}
-            onChange={(e) =>
-              setQuantity(e.target.value)
-            }
+            onChange={(e) => setQuantity(e.target.value)}
           />
         </div>
 
@@ -972,18 +936,14 @@ function OrderForm() {
           <input
             type="number"
             value={price}
-            onChange={(e) =>
-              setPrice(e.target.value)
-            }
+            onChange={(e) => setPrice(e.target.value)}
           />
         </div>
 
         <br />
 
         <button type="submit">
-          {loading
-            ? "Creating..."
-            : "Create Order"}
+          {loading ? "Creating..." : "Create Order"}
         </button>
       </form>
     </div>
@@ -1031,25 +991,13 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route
-          path="/"
-          element={<Dashboard />}
-        />
+        <Route path="/" element={<Dashboard />} />
 
-        <Route
-          path="/orders"
-          element={<Orders />}
-        />
+        <Route path="/orders" element={<Orders />} />
 
-        <Route
-          path="/products"
-          element={<Products />}
-        />
+        <Route path="/products" element={<Products />} />
 
-        <Route
-          path="/settings"
-          element={<Settings />}
-        />
+        <Route path="/settings" element={<Settings />} />
       </Routes>
     </BrowserRouter>
   );
@@ -1216,9 +1164,7 @@ import { Link } from "react-router-dom";
 function Sidebar() {
   return (
     <div className="w-64 h-screen bg-gray-900 text-white p-5">
-      <h1 className="text-2xl font-bold mb-10">
-        Shopify Helper
-      </h1>
+      <h1 className="text-2xl font-bold mb-10">Shopify Helper</h1>
 
       <nav className="flex flex-col gap-4">
         <Link to="/">Dashboard</Link>
@@ -1244,9 +1190,7 @@ export default Sidebar;
 function Navbar() {
   return (
     <div className="h-16 bg-white shadow flex items-center px-6">
-      <h2 className="text-xl font-semibold">
-        Shopify Admin Panel
-      </h2>
+      <h2 className="text-xl font-semibold">Shopify Admin Panel</h2>
     </div>
   );
 }
@@ -1270,9 +1214,7 @@ function MainLayout({ children }) {
       <div className="flex-1 bg-gray-100 min-h-screen">
         <Navbar />
 
-        <div className="p-6">
-          {children}
-        </div>
+        <div className="p-6">{children}</div>
       </div>
     </div>
   );
@@ -1297,9 +1239,7 @@ import OrderForm from "../components/orders/OrderForm";
 function Orders() {
   return (
     <MainLayout>
-      <h1 className="text-3xl font-bold mb-6">
-        Orders
-      </h1>
+      <h1 className="text-3xl font-bold mb-6">Orders</h1>
 
       <OrderForm />
     </MainLayout>
@@ -1331,3 +1271,663 @@ Recommended next steps:
 8. Toast Notifications
 9. Authentication
 10. Webhooks
+
+# PHASE 15 — SHOPIFY STORE CREATION AUTOMATION + CSV PRODUCT IMPORT
+
+---
+
+# OVERVIEW
+
+Now the project supports FULL Shopify automation:
+
+```txt
+Playwright
+   ↓
+Login to Shopify Partner
+   ↓
+Create Development Store
+   ↓
+Enable Custom App Development
+   ↓
+Create Legacy Custom App
+   ↓
+Enable Admin API Scopes
+   ↓
+Install App
+   ↓
+Generate Admin API Token
+   ↓
+Import CSV Products via Shopify API
+   ↓
+Done
+```
+
+This combines:
+
+- Browser Automation (Playwright)
+- Backend API Automation (Axios + Shopify Admin API)
+
+---
+
+# PHASE 15.1 — INSTALL PLAYWRIGHT
+
+Inside backend:
+
+```bash
+npm install -D @playwright/test
+```
+
+Install browsers:
+
+```bash
+npx playwright install
+```
+
+---
+
+# PHASE 15.2 — CREATE PLAYWRIGHT STRUCTURE
+
+Inside backend create:
+
+```txt
+src/playwright/
+│
+├── tests/
+│   └── createStore.spec.js
+│
+└── playwright-user-data/
+```
+
+---
+
+# PHASE 15.3 — CREATE PLAYWRIGHT CONFIG
+
+Create:
+
+```txt
+backend/playwright.config.js
+```
+
+Code:
+
+```js
+import { defineConfig } from "@playwright/test";
+
+export default defineConfig({
+  testDir: "./src/playwright/tests",
+
+  use: {
+    headless: false,
+  },
+});
+```
+
+---
+
+# PHASE 15.4 — INSTALL CSV IMPORT PACKAGES
+
+Inside backend:
+
+```bash
+npm install axios csv-parser
+```
+
+---
+
+# PHASE 15.5 — CREATE TEMP ENV FOLDER
+
+Inside backend create:
+
+```txt
+temp-store-env/
+```
+
+This stores temporary runtime credentials.
+
+Example:
+
+```txt
+temp-store-env/teststore123.env
+```
+
+---
+
+# PHASE 15.6 — CREATE SHOPIFY API FACTORY
+
+Update:
+
+```txt
+src/config/shopify.js
+```
+
+Code:
+
+```js
+import axios from "axios";
+
+export function createShopifyApi(store, token) {
+  return axios.create({
+    baseURL: `https://${store}/admin/api/2023-01`,
+
+    headers: {
+      "X-Shopify-Access-Token": token,
+
+      "Content-Type": "application/json",
+    },
+  });
+}
+```
+
+---
+
+# IMPORTANT — WHY THIS CHANGED
+
+Earlier:
+
+```txt
+Single store
+Single token
+```
+
+Now:
+
+```txt
+Dynamic store
+Dynamic token
+```
+
+This allows importing products into ANY newly created store automatically.
+
+---
+
+# PHASE 15.7 — CREATE PRODUCT SERVICE
+
+Create:
+
+```txt
+src/services/shopify/productService.js
+```
+
+Code:
+
+```js
+import { createShopifyApi } from "../../config/shopify.js";
+
+export async function createProduct(store, token, productData) {
+  const shopifyApi = createShopifyApi(store, token);
+
+  const response = await shopifyApi.post("/products.json", {
+    product: productData,
+  });
+
+  return response.data;
+}
+```
+
+---
+
+# PHASE 15.8 — CREATE CSV IMPORT SERVICE
+
+Create:
+
+```txt
+src/services/shopify/importCsvService.js
+```
+
+Code:
+
+```js
+import fs from "fs";
+import csv from "csv-parser";
+
+import { createProduct } from "./productService.js";
+
+export async function importProductsFromCSV(filePath, store, token) {
+  const groupedProducts = {};
+
+  return new Promise((resolve, reject) => {
+    fs.createReadStream(filePath)
+
+      .pipe(csv())
+
+      .on("data", (row) => {
+        const handle = row.Handle;
+
+        if (!groupedProducts[handle]) {
+          groupedProducts[handle] = {
+            title: row.Title,
+
+            body_html: row["Body (HTML)"] || "",
+
+            vendor: row.Vendor || "PluginHive",
+
+            product_type: row.Type || "",
+
+            tags: row.Tags || "",
+
+            status: row.Status || "active",
+
+            options: [],
+
+            variants: [],
+          };
+        }
+
+        const optionNames = [];
+
+        if (row["Option1 Name"]) {
+          optionNames.push({
+            name: row["Option1 Name"],
+          });
+        }
+
+        if (row["Option2 Name"]) {
+          optionNames.push({
+            name: row["Option2 Name"],
+          });
+        }
+
+        if (row["Option3 Name"]) {
+          optionNames.push({
+            name: row["Option3 Name"],
+          });
+        }
+
+        groupedProducts[handle].options = optionNames;
+
+        groupedProducts[handle].variants.push({
+          option1: row["Option1 Value"] || null,
+
+          option2: row["Option2 Value"] || null,
+
+          option3: row["Option3 Value"] || null,
+
+          sku: row["Variant SKU"] || "",
+
+          price: row["Variant Price"] || "0.00",
+
+          inventory_quantity: parseInt(row["Variant Inventory Qty"] || 0),
+
+          inventory_management: "shopify",
+
+          inventory_policy: row["Variant Inventory Policy"] || "deny",
+
+          fulfillment_service: "manual",
+
+          taxable: row["Variant Taxable"] === "true",
+
+          requires_shipping: row["Variant Requires Shipping"] === "true",
+
+          grams: parseFloat(row["Variant Grams"] || 0),
+
+          weight_unit: row["Variant Weight Unit"] || "kg",
+        });
+      })
+
+      .on("end", async () => {
+        try {
+          const productHandles = Object.keys(groupedProducts);
+
+          console.log(`Found ${productHandles.length} products`);
+
+          for (const handle of productHandles) {
+            const productPayload = groupedProducts[handle];
+
+            const createdProduct = await createProduct(
+              store,
+              token,
+              productPayload,
+            );
+
+            console.log(`✅ Product Created: ${productPayload.title}`);
+
+            console.log(`Variants: ${productPayload.variants.length}`);
+
+            console.log(`Product ID: ${createdProduct.product.id}`);
+          }
+
+          console.log("✅ ALL PRODUCTS IMPORTED");
+
+          resolve();
+        } catch (err) {
+          console.log(err.response?.data || err.message);
+
+          reject(err);
+        }
+      });
+  });
+}
+```
+
+---
+
+# IMPORTANT — HOW VARIABLE PRODUCTS WORK
+
+Your Shopify CSV contains:
+
+```txt
+Same Handle
+Multiple Rows
+```
+
+Example:
+
+```txt
+tshirt_variableproduct
+```
+
+appears multiple times.
+
+The importer:
+
+- groups rows by Handle
+- creates ONE product
+- creates MULTIPLE variants
+
+Exactly how Shopify expects variants.
+
+---
+
+# PHASE 15.9 — ADD CSV FILE
+
+Inside backend create:
+
+```txt
+csv/
+```
+
+Add:
+
+```txt
+products.csv
+```
+
+Example:
+
+```txt
+backend/csv/products.csv
+```
+
+---
+
+# PHASE 15.10 — PLAYWRIGHT STORE CREATION FLOW
+
+Create:
+
+```txt
+src/playwright/tests/createStore.spec.js
+```
+
+This Playwright automation performs:
+
+---
+
+## STEP 1 — LOGIN TO SHOPIFY PARTNER
+
+Uses saved session:
+
+```txt
+auth-partner.json
+```
+
+or manual login first time.
+
+---
+
+## STEP 2 — CREATE DEVELOPMENT STORE
+
+Playwright:
+
+- clicks Add dev store
+- opens popup
+- enters store name
+- creates store
+
+---
+
+## STEP 3 — ENABLE CUSTOM APP DEVELOPMENT
+
+Playwright opens:
+
+```txt
+/settings/apps/development/enable
+```
+
+Then clicks:
+
+```txt
+Allow custom app development
+```
+
+---
+
+## STEP 4 — CREATE LEGACY CUSTOM APP
+
+Playwright:
+
+- clicks Create legacy custom app
+- enters app name
+- creates app
+
+---
+
+## STEP 5 — ENABLE ADMIN API SCOPES
+
+Playwright:
+
+- loops through all checkboxes
+- enables every Admin API scope
+
+Example:
+
+```js
+const allCheckboxes = page1.locator('input[type="checkbox"]');
+```
+
+---
+
+## STEP 6 — INSTALL APP
+
+Playwright:
+
+- clicks Install app
+- confirms install popup
+
+This activates API access.
+
+---
+
+## STEP 7 — REVEAL TOKEN
+
+Playwright:
+
+- clicks Reveal token once
+- extracts:
+
+```txt
+shpat_xxxxx
+```
+
+This token gives backend Admin API access.
+
+---
+
+# PHASE 15.11 — RETRY TOKEN LOGIC
+
+The automation retries reveal token extraction automatically.
+
+Why?
+
+Because Shopify sometimes:
+
+- delays rendering token
+- returns blank initially
+
+Logic:
+
+- retries up to 5 times
+- validates token starts with:
+
+```txt
+shpat_
+```
+
+---
+
+# PHASE 15.12 — CREATE TEMP ENV FILE
+
+After token generation:
+
+```txt
+temp-store-env/storeName.env
+```
+
+Example:
+
+```env
+SHOPIFY_STORE=teststore123.myshopify.com
+SHOPIFY_ACCESS_TOKEN=shpat_xxxxx
+SHOPIFY_API_VERSION=2023-01
+```
+
+---
+
+# IMPORTANT — WHY TEMP ENV IS USED
+
+Instead of overwriting:
+
+```txt
+.env
+```
+
+we create temporary runtime configuration.
+
+Benefits:
+
+✅ Supports multiple stores
+✅ Parallel automation
+✅ Cleaner architecture
+✅ No global env pollution
+
+---
+
+# PHASE 15.13 — IMPORT PRODUCTS AUTOMATICALLY
+
+After token generation:
+
+```js
+await importProductsFromCSV(
+  "./csv/products.csv",
+  `${storeName}.myshopify.com`,
+  shpat,
+);
+```
+
+This automatically imports all products into the NEWLY CREATED STORE.
+
+---
+
+# PHASE 15.14 — DELETE TEMP ENV FILE
+
+After import:
+
+```js
+fs.unlinkSync(tempEnvPath);
+```
+
+Temporary credentials are removed automatically.
+
+---
+
+# FINAL AUTOMATION FLOW
+
+```txt
+Playwright Browser
+────────────────────
+
+Login
+   ↓
+Create Store
+   ↓
+Enable Custom Apps
+   ↓
+Create Legacy App
+   ↓
+Enable API Scopes
+   ↓
+Install App
+   ↓
+Generate Token
+
+
+Backend API Layer
+────────────────────
+
+Create Temp Env
+   ↓
+Read CSV
+   ↓
+Group Products
+   ↓
+Create Products via Admin API
+   ↓
+Delete Temp Env
+   ↓
+Done
+```
+
+---
+
+# HOW TO RUN FULL AUTOMATION
+
+Inside backend:
+
+```bash
+npx playwright test src/playwright/tests/createStore.spec.js
+```
+
+This single command now performs EVERYTHING automatically.
+
+---
+
+# EXPECTED OUTPUT
+
+```txt
+✅ Store Created
+
+✅ Token captured successfully
+
+Found 6 products
+
+✅ Product Created: 1. Variable Product
+
+✅ Product Created: 2. Simple Product
+
+✅ ALL PRODUCTS IMPORTED
+
+✅ PRODUCTS IMPORTED INTO NEW STORE
+
+✅ Temp env deleted
+```
+
+---
+
+# VERIFY PRODUCTS
+
+Open:
+
+```txt
+https://admin.shopify.com/store/YOUR_STORE/products
+```
+
+You should see:
+
+- simple products
+- variable products
+- inventory
+- SKUs
+- pricing
+- digital products
+- variants
+
+all imported automatically.

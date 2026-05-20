@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import orderRoutes from "./routes/orderRoutes.js";
+import storeRoutes from "./routes/storeRoutes.js";
 
 const app = express();
 
@@ -12,5 +13,5 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/orders", orderRoutes);
-
+app.use("/api/stores", storeRoutes);
 export default app;
