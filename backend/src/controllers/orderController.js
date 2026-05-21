@@ -5,9 +5,10 @@ export const createOrder = async (req, res) => {
     const result = await createOrderService(req.body);
     res.json(result);
   } catch (error) {
-    console.log(error.message.data);
-    res.status(500).json({
-      error: error.message,
+    const shopifyError = error.response?.data;
+    console.error("Order creation failed:", shopifyError ?? error.message);
+    res.status(error.response?.status ?? 500).json({
+      error: shopifyError ?? error.message,
     });
   }
 };

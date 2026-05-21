@@ -6,512 +6,373 @@ import { importProductsFromCSV } from "../../services/shopify/importCsvService.j
 
 dotenv.config();
 
-export async function createStoreAutomation(storeData) {
-  let storeName = "";
-  let shpat = "";
+const BROWSER_DATA_DIR = "./playwright-user-data";
+const SESSION_FILE = "auth-partner.json";
+const PARTNER_STORES_URL = "https://dev.shopify.com/dashboard/129786666/stores";
 
-  const sessionFile = "auth-partner.json";
+// ─── Browser ────────────────────────────────────────────────────────────────
 
-  const context = await chromium.launchPersistentContext(
-    "./playwright-user-data",
-    {
-      headless: false,
+async function launchBrowser() {
+  return chromium.launchPersistentContext(BROWSER_DATA_DIR, {
+    headless: false,
+    viewport: { width: 1440, height: 900 },
+    args: ["--disable-blink-features=AutomationControlled"],
+  });
+}
 
-      viewport: {
-        width: 1440,
-        height: 900,
-      },
+// ─── Session ─────────────────────────────────────────────────────────────────
 
-      args: ["--disable-blink-features=AutomationControlled"],
-    },
-  );
+async function restoreSession(context) {
+  if (!fs.existsSync(SESSION_FILE)) return;
+  const storage = JSON.parse(fs.readFileSync(SESSION_FILE, "utf-8"));
+  await context.addCookies(storage.cookies);
+  console.log("✅ Session restored");
+}
 
-  const page = await context.newPage();
+async function saveSession(context) {
+  await context.storageState({ path: SESSION_FILE });
+  console.log("✅ Session saved");
+}
 
-  // -----------------------------------
-  // Restore session if exists
-  // -----------------------------------
+// ─── Login ───────────────────────────────────────────────────────────────────
 
-  if (fs.existsSync(sessionFile)) {
-    const storage = JSON.parse(fs.readFileSync(sessionFile, "utf-8"));
-
-    await context.addCookies(storage.cookies);
-
-    console.log("✅ Existing session loaded");
-  }
-
-  // -----------------------------------
-  // Open Shopify Partner
-  // -----------------------------------
-
-  await page.goto("https://dev.shopify.com/dashboard/129786666/stores", {
+async function ensureLoggedIn(page, context) {
+  await page.goto(PARTNER_STORES_URL, {
     waitUntil: "domcontentloaded",
     timeout: 60000,
   });
 
-  // -----------------------------------
-  // Check login screen
-  // -----------------------------------
-
   const emailInput = page.locator("#account_email");
-
   const emailVisible = await emailInput.isVisible().catch(() => false);
+  if (!emailVisible) return;
 
-  if (emailVisible) {
-    console.log("🔐 Logging in...");
+  console.log("🔐 Logging in...");
 
-    // -----------------------------------
-    // Email
-    // -----------------------------------
+  await emailInput.fill(process.env.USER_EMAIL);
+  await page.locator('button:has-text("Continue with email")').click();
+  await page
+    .waitForLoadState("networkidle", { timeout: 15000 })
+    .catch(() => {});
 
-    await emailInput.fill(process.env.USER_EMAIL);
+  const passwordInput = page.locator("#account_password");
+  await passwordInput.waitFor({ state: "attached", timeout: 15000 });
 
-    await page.locator('button:has-text("Continue with email")').click();
+  const filled = await page.evaluate((pwd) => {
+    const input = document.querySelector("#account_password");
+    if (!input) return false;
+    const nativeSetter = Object.getOwnPropertyDescriptor(
+      window.HTMLInputElement.prototype,
+      "value",
+    )?.set;
+    nativeSetter.call(input, pwd);
+    input.dispatchEvent(new Event("input", { bubbles: true }));
+    input.dispatchEvent(new Event("change", { bubbles: true }));
+    return true;
+  }, process.env.USER_PASSWORD);
 
-    await page
-      .waitForLoadState("networkidle", {
-        timeout: 15000,
-      })
-      .catch(() => {});
+  if (!filled) throw new Error("Could not fill password field");
 
-    // -----------------------------------
-    // Password
-    // -----------------------------------
+  await page.evaluate(() => {
+    const btn =
+      document.querySelector('button[type="submit"]') ||
+      document.querySelector("div.footer-form-submit");
+    btn?.click();
+  });
 
-    const passwordInput = page.locator("#account_password");
+  await page.waitForTimeout(5000);
+  await saveSession(context);
+}
 
-    await passwordInput.waitFor({
-      state: "attached",
-      timeout: 15000,
-    });
+// ─── Store Creation ───────────────────────────────────────────────────────────
 
-    const filled = await page.evaluate((pwd) => {
-      const input = document.querySelector("#account_password");
-
-      if (!input) return false;
-
-      const nativeSetter = Object.getOwnPropertyDescriptor(
-        window.HTMLInputElement.prototype,
-        "value",
-      )?.set;
-
-      nativeSetter.call(input, pwd);
-
-      input.dispatchEvent(new Event("input", { bubbles: true }));
-
-      input.dispatchEvent(new Event("change", { bubbles: true }));
-
-      return true;
-    }, process.env.USER_PASSWORD);
-
-    if (!filled) {
-      throw new Error("Could not fill password field");
-    }
-
-    // -----------------------------------
-    // Submit Login
-    // -----------------------------------
-
-    await page.evaluate(() => {
-      const btn =
-        document.querySelector('button[type="submit"]') ||
-        document.querySelector("div.footer-form-submit");
-
-      btn?.click();
-    });
-
-    await page.waitForTimeout(5000);
-
-    // -----------------------------------
-    // Save Session
-    // -----------------------------------
-
-    await context.storageState({
-      path: sessionFile,
-    });
-
-    console.log("✅ Session saved");
-  }
-
+async function createDevStore(page, storeName) {
   await page.waitForTimeout(3000);
 
-  // -----------------------------------
-  // Create Store
-  // -----------------------------------
+  const popupPromise = page.waitForEvent("popup");
+  await page.getByRole("link", { name: "Add dev store" }).click({ delay: 120 });
+  const storePage = await popupPromise;
 
-  const page1Promise = page.waitForEvent("popup");
+  await storePage.waitForLoadState("domcontentloaded");
+  await storePage.waitForTimeout(3000);
 
-  await page
-    .getByRole("link", {
-      name: "Add dev store",
-    })
-    .click({
-      delay: 120,
-    });
-
-  const page1 = await page1Promise;
-
-  await page1.waitForLoadState("domcontentloaded");
-
-  await page1.waitForTimeout(3000);
-
-  // -----------------------------------
-  // Store Name
-  // -----------------------------------
-
-  storeName = storeData.storeName;
-
-  const nameField = page1.locator('input[name="storeName"]');
-
-  await nameField.waitFor({
-    state: "visible",
-    timeout: 15000,
-  });
+  const nameField = storePage.locator('input[name="storeName"]');
+  await nameField.waitFor({ state: "visible", timeout: 15000 });
 
   for (const char of storeName) {
-    await nameField.type(char, {
-      delay: 80 + Math.random() * 80,
-    });
+    await nameField.type(char, { delay: 80 + Math.random() * 80 });
   }
 
-  await page1.waitForTimeout(1500);
+  await storePage.waitForTimeout(1500);
+  await storePage
+    .locator('select[name="Shopify plan"]')
+    .selectOption("Advanced");
+  await storePage.getByText("Create store").click({ delay: 100 });
+  await storePage.waitForLoadState("domcontentloaded");
+  await storePage.waitForTimeout(5000);
 
-  // -----------------------------------
-  // Shopify Plan
-  // -----------------------------------
-
-  await page1.locator('select[name="Shopify plan"]').selectOption("Advanced");
-
-  // -----------------------------------
-  // Create Store
-  // -----------------------------------
-
-  await page1.getByText("Create store").click({
-    delay: 100,
-  });
-
-  await page1.waitForLoadState("domcontentloaded");
-
-  await page1.waitForTimeout(5000);
-
-  // -----------------------------------
-  // Account Card
-  // -----------------------------------
-
-  const accountCard = page1.getByRole("link", {
+  const accountCard = storePage.getByRole("link", {
     name: new RegExp(process.env.USER_EMAIL, "i"),
   });
+  if ((await accountCard.count()) > 0) await accountCard.click();
 
-  if ((await accountCard.count()) > 0) {
-    await accountCard.click();
-  }
+  await storePage.waitForTimeout(20000);
 
-  // -----------------------------------
-  // Wait Store Creation
-  // -----------------------------------
+  const storeNameLocator = storePage.locator(
+    "div.Polaris-Box > div > span > p",
+  );
+  await storeNameLocator.waitFor({ state: "visible", timeout: 30000 });
 
-  await page1.waitForTimeout(20000);
+  console.log("✅ Store created:", await storeNameLocator.innerText());
 
-  const storeNameLocator = page1.locator("div.Polaris-Box > div > span > p");
+  return storePage;
+}
 
-  await storeNameLocator.waitFor({
-    state: "visible",
-    timeout: 30000,
-  });
+// ─── Custom App Setup ─────────────────────────────────────────────────────────
 
-  console.log("✅ Store Created");
-
-  console.log("Store:", await storeNameLocator.innerText());
-
-  console.log(page1.url());
-
-  // -----------------------------------
-  // ENABLE CUSTOM APP DEVELOPMENT
-  // -----------------------------------
-
-  await page1.goto(`${page1.url()}/settings/apps/development/enable`, {
+async function enableCustomApps(storePage) {
+  await storePage.goto(`${storePage.url()}/settings/apps/development/enable`, {
     waitUntil: "domcontentloaded",
   });
+  await storePage.waitForTimeout(5000);
 
-  await page1.waitForTimeout(5000);
-
-  const allowCustomAppsBtn = page1.getByRole("button", {
+  const allowBtn = storePage.getByRole("button", {
     name: /allow custom app development/i,
   });
-
-  if (await allowCustomAppsBtn.isVisible().catch(() => false)) {
-    await allowCustomAppsBtn.click({
-      delay: 120,
-    });
-
-    await page1.waitForLoadState("networkidle");
-
-    await page1.waitForTimeout(5000);
+  if (await allowBtn.isVisible().catch(() => false)) {
+    await allowBtn.click({ delay: 120 });
+    await storePage.waitForLoadState("networkidle");
+    await storePage.waitForTimeout(5000);
   }
+}
 
-  // -----------------------------------
-  // CREATE LEGACY CUSTOM APP
-  // -----------------------------------
-
-  await page1
-    .getByRole("button", {
-      name: "Create a legacy custom app",
-    })
-    .click({
-      delay: 120,
-    });
-
-  await page1.waitForTimeout(4000);
-
-  // -----------------------------------
-  // APP NAME
-  // -----------------------------------
+async function createLegacyApp(storePage) {
+  await storePage
+    .getByRole("button", { name: "Create a legacy custom app" })
+    .click({ delay: 120 });
+  await storePage.waitForTimeout(4000);
 
   const appName = `AutomationApp${Date.now()}`;
+  await storePage.locator('input[name="appName"]').fill(appName);
+  await storePage.waitForTimeout(1500);
 
-  await page1.locator('input[name="appName"]').fill(appName);
+  await storePage
+    .getByRole("button", { name: /^create app$/i })
+    .click({ delay: 120 });
+  await storePage.waitForLoadState("networkidle");
+  await storePage.waitForTimeout(5000);
+}
 
-  await page1.waitForTimeout(1500);
+// ─── API Scopes ───────────────────────────────────────────────────────────────
 
-  // -----------------------------------
-  // CREATE APP
-  // -----------------------------------
+async function configureApiScopes(storePage) {
+  await storePage.getByText("Configure Admin API scopes").click({ delay: 120 });
+  await storePage.waitForLoadState("domcontentloaded");
+  await storePage.waitForTimeout(5000);
 
-  await page1
-    .getByRole("button", {
-      name: /^create app$/i,
-    })
-    .click({
-      delay: 120,
-    });
+  const checkboxes = storePage.locator('input[type="checkbox"]');
+  const count = await checkboxes.count();
+  console.log(`Checking ${count} API scope checkboxes`);
 
-  await page1.waitForLoadState("networkidle");
-
-  await page1.waitForTimeout(5000);
-
-  // -----------------------------------
-  // CONFIGURE ADMIN API SCOPES
-  // -----------------------------------
-
-  await page1.getByText("Configure Admin API scopes").click({
-    delay: 120,
-  });
-
-  await page1.waitForLoadState("domcontentloaded");
-
-  await page1.waitForTimeout(5000);
-
-  // -----------------------------------
-  // ENABLE ALL CHECKBOXES
-  // -----------------------------------
-
-  const allCheckboxes = page1.locator('input[type="checkbox"]');
-
-  const checkboxCount = await allCheckboxes.count();
-
-  console.log(`Checked ${checkboxCount} checkboxes`);
-
-  for (let i = 0; i < checkboxCount; i++) {
-    const checkbox = allCheckboxes.nth(i);
-
+  for (let i = 0; i < count; i++) {
     try {
-      const checked = await checkbox.isChecked();
-
-      if (!checked) {
-        await checkbox.check({
-          force: true,
-        });
-
-        await page1.waitForTimeout(50);
+      const checkbox = checkboxes.nth(i);
+      if (!(await checkbox.isChecked())) {
+        await checkbox.check({ force: true });
+        await storePage.waitForTimeout(50);
       }
-    } catch (err) {
+    } catch {
       console.log(`Skipping checkbox ${i}`);
     }
   }
 
-  // -----------------------------------
-  // SAVE
-  // -----------------------------------
-
-  await page1.waitForTimeout(2000);
-
-  await page1
-    .getByRole("button", {
-      name: /^save$/i,
-    })
+  await storePage.waitForTimeout(2000);
+  await storePage
+    .getByRole("button", { name: /^save$/i })
     .first()
-    .click({
-      delay: 120,
-    });
+    .click({ delay: 120 });
+  await storePage.waitForLoadState("networkidle");
+  await storePage.waitForTimeout(5000);
+}
 
-  await page1.waitForLoadState("networkidle");
+// ─── App Install ──────────────────────────────────────────────────────────────
 
-  await page1.waitForTimeout(5000);
+async function installApp(storePage) {
+  await storePage.locator('button[role="tab"]#overview').click({ delay: 120 });
+  await storePage.waitForTimeout(5000);
 
-  // -----------------------------------
-  // GO TO OVERVIEW
-  // -----------------------------------
+  const installBtn = storePage
+    .locator('button:has-text("Install app")')
+    .first();
+  await installBtn.waitFor({ state: "visible", timeout: 30000 });
+  await installBtn.click({ delay: 120 });
+  await storePage.waitForTimeout(3000);
 
-  await page1.locator('button[role="tab"]#overview').click({
-    delay: 120,
-  });
+  const confirmInstallBtn = storePage
+    .getByRole("button", { name: /^Install$/ })
+    .last();
 
-  await page1.waitForTimeout(5000);
+  const isDisabled = await confirmInstallBtn.isDisabled().catch(() => true);
+  if (isDisabled) {
+    await storePage
+      .locator('button[role="tab"]#configuration')
+      .click({ delay: 120 });
+    await storePage.waitForTimeout(2000);
+    await storePage
+      .locator('button[role="tab"]#overview')
+      .click({ delay: 120 });
+    await storePage.waitForTimeout(2000);
+  }
 
-  // -----------------------------------
-  // INSTALL APP
-  // -----------------------------------
+  await confirmInstallBtn.click({ delay: 120 });
+  await storePage.waitForLoadState("networkidle");
+  await storePage.waitForTimeout(5000);
+}
 
-  const installAppBtn = page1.locator('button:has-text("Install app")').first();
+// ─── Token Capture ────────────────────────────────────────────────────────────
 
-  await installAppBtn.waitFor({
-    state: "visible",
-    timeout: 30000,
-  });
-
-  await installAppBtn.click({
-    delay: 120,
-  });
-
-  await page1.waitForTimeout(3000);
-
-  // -----------------------------------
-  // CONFIRM INSTALL
-  // -----------------------------------
-
-  await page1
-    .getByRole("button", {
-      name: /^Install$/,
-    })
-    .last()
-    .click({
-      delay: 120,
-    });
-
-  await page1.waitForLoadState("networkidle");
-
-  await page1.waitForTimeout(5000);
-
-  // -----------------------------------
-  // REVEAL TOKEN
-  // -----------------------------------
-
+async function captureToken(storePage) {
   for (let attempt = 1; attempt <= 5; attempt++) {
-    console.log(`Trying to reveal token - Attempt ${attempt}`);
+    console.log(`Revealing token — attempt ${attempt}`);
 
-    await page1.evaluate(() => {
-      const internalButtons = document.querySelectorAll("s-internal-button");
-
-      for (const btn of internalButtons) {
+    await storePage.evaluate(() => {
+      const buttons = document.querySelectorAll("s-internal-button");
+      for (const btn of buttons) {
         if (btn.innerText.includes("Reveal token once")) {
-          const shadow = btn.shadowRoot;
-
-          const realButton = shadow?.querySelector("button");
-
-          realButton?.click();
-
+          btn.shadowRoot?.querySelector("button")?.click();
           break;
         }
       }
     });
 
-    await page1.waitForTimeout(3000);
+    await storePage.waitForTimeout(3000);
 
-    const textInputs = page1.locator('input[type="text"]');
-
-    const inputCount = await textInputs.count();
+    const inputs = storePage.locator('input[type="text"]');
+    const inputCount = await inputs.count();
 
     for (let i = 0; i < inputCount; i++) {
-      const value = await textInputs.nth(i).inputValue();
-
-      console.log(`INPUT ${i}: ${value}`);
-
-      if (value && value.startsWith("shpat_")) {
-        shpat = value;
-        break;
+      const value = await inputs.nth(i).inputValue();
+      if (value?.startsWith("shpat_")) {
+        console.log("✅ Token captured");
+        return value;
       }
     }
 
-    if (shpat && shpat.startsWith("shpat_")) {
-      console.log("✅ Token captured successfully");
-
-      break;
-    }
-
-    console.log("❌ Token empty, retrying...");
-
-    await page1.waitForTimeout(2000);
+    console.log("❌ Token not found, retrying...");
+    await storePage.waitForTimeout(2000);
   }
 
-  if (!shpat || !shpat.startsWith("shpat_")) {
-    throw new Error("Failed to capture Shopify token after retries");
-  }
+  throw new Error("Failed to capture Shopify token after 5 attempts");
+}
 
-  // -----------------------------------
-  // URLS
-  // -----------------------------------
+// ─── API Version ─────────────────────────────────────────────────────────────
 
-  const partnerUrl = page.url();
-
+async function fetchApiVersion(storePage) {
   // -----------------------------------
-  // GET REAL STORE HANDLE
+  // OPEN CONFIGURATION TAB
   // -----------------------------------
 
-  const currentAdminUrl = page1.url();
+  const configurationTab = storePage.locator("#app-configuration");
 
-  console.log(currentAdminUrl);
+  await configurationTab.waitFor({
+    state: "visible",
+    timeout: 30000,
+  });
 
-  // Example:
-  // https://admin.shopify.com/store/new-testing-store-hrcuth7x
+  await configurationTab.click({
+    delay: 120,
+  });
 
-  const realStoreHandle = currentAdminUrl.split("/store/")[1]?.split("/")[0];
-
-  const storeUrl = `${realStoreHandle}.myshopify.com`;
-
-  console.log("REAL STORE URL:", storeUrl);
-  const appUrl = `https://admin.shopify.com/store/${storeName}/apps/mcsl-qa`;
+  await storePage.waitForTimeout(4000);
 
   // -----------------------------------
-  // TEMP ENV FILE
+  // GET WEBHOOK VERSION
   // -----------------------------------
 
+  const webhookCode = storePage
+    .locator("code")
+    .filter({
+      hasText: /^\d{4}-\d{2}$/,
+    })
+    .last();
+
+  await webhookCode.waitFor({
+    state: "visible",
+    timeout: 15000,
+  });
+
+  const webhookVersion = await webhookCode.innerText();
+
+  console.log(`✅ Webhook Version: ${webhookVersion}`);
+
+  return webhookVersion;
+}
+// ─── Product Import ───────────────────────────────────────────────────────────
+
+async function importProducts(storeName, storeUrl, token) {
   const tempEnvPath = `./temp-store-env/${storeName}.env`;
 
   fs.writeFileSync(
     tempEnvPath,
-    `
-SHOPIFY_STORE=${storeUrl}
-SHOPIFY_ACCESS_TOKEN=${shpat}
-SHOPIFY_API_VERSION=2023-01
-`,
+    `SHOPIFY_STORE=${storeUrl}\nSHOPIFY_ACCESS_TOKEN=${token}\nSHOPIFY_API_VERSION=${process.env.SHOPIFY_API_VERSION}\n`,
   );
 
-  console.log(`✅ Temp env created: ${tempEnvPath}`);
-
-  // -----------------------------------
-  // IMPORT PRODUCTS
-  // -----------------------------------
-
-  await importProductsFromCSV("./csv/products.csv", storeUrl, shpat);
-
-  console.log("✅ PRODUCTS IMPORTED INTO NEW STORE");
-
-  // -----------------------------------
-  // DELETE TEMP ENV
-  // -----------------------------------
+  const products = await importProductsFromCSV(
+    "./csv/products.csv",
+    storeUrl,
+    token,
+  );
+  console.log("✅ Products imported");
 
   fs.unlinkSync(tempEnvPath);
+  return products;
+}
 
-  console.log("✅ Temp env deleted");
+// ─── Helpers ──────────────────────────────────────────────────────────────────
 
-  await context.close();
+function extractStoreUrl(adminUrl) {
+  const handle = adminUrl.split("/store/")[1]?.split("/")[0];
+  return `${handle}.myshopify.com`;
+}
 
-  return {
-    success: true,
-    storeName,
-    storeUrl,
-    partnerUrl,
-    appUrl,
-    token: shpat,
-  };
+// ─── Orchestrator ─────────────────────────────────────────────────────────────
+
+export async function createStoreAutomation(storeData) {
+  const context = await launchBrowser();
+  const page = await context.newPage();
+
+  try {
+    await restoreSession(context);
+    await ensureLoggedIn(page, context);
+
+    const storePage = await createDevStore(page, storeData.storeName);
+
+    await enableCustomApps(storePage);
+    await createLegacyApp(storePage);
+    await configureApiScopes(storePage);
+    await installApp(storePage);
+
+    const token = await captureToken(storePage);
+    const apiVersion = await fetchApiVersion(storePage);
+    const storeUrl = extractStoreUrl(storePage.url());
+    const partnerUrl = page.url();
+    const appUrl = `https://admin.shopify.com/store/${storeData.storeName}/apps/mcsl-qa`;
+
+    const { simpleProducts, variableProducts, digitalProducts } =
+      await importProducts(storeData.storeName, storeUrl, token);
+
+    return {
+      success: true,
+      storeName: storeData.storeName,
+      storeUrl,
+      partnerUrl,
+      appUrl,
+      token,
+      apiVersion,
+      simpleProducts,
+      variableProducts,
+      digitalProducts,
+    };
+  } finally {
+    await context.close();
+  }
 }

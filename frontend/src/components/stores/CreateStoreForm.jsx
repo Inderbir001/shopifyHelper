@@ -141,22 +141,17 @@ function CreateStoreForm() {
             <div className="bg-[#0B1120] rounded-2xl p-6 overflow-auto">
               <pre className="text-green-400 text-sm leading-8 whitespace-pre-wrap">
                 {`PARTNER_URL = ${result.partnerUrl}
-
 SHOPIFYURL = ${result.storeUrl}
-
 APPURL = ${result.appUrl}
-
-USER_EMAIL = inderbir@pluginhive.com
-
-USER_PASSWORD = Inderbir@123!
-
-STORE_PASSWORD = 
-
-SHOPIFY_API_VERSION = 2023-01
-
+USER_EMAIL =
+USER_PASSWORD =
+STORE_PASSWORD =
+SHOPIFY_API_VERSION = ${result.apiVersion}
 SHOPIFY_STORE_NAME = ${result.storeName}
-
-SHOPIFY_ACCESS_TOKEN = ${result.token}`}
+SHOPIFY_ACCESS_TOKEN = ${result.token}
+SIMPLE_PRODUCTS_JSON = ${JSON.stringify(result.simpleProducts)}
+VARIABLE_PRODUCTS_JSON = ${JSON.stringify(result.variableProducts)}
+DIGITAL_PRODUCTS = ${JSON.stringify(result.digitalProducts)}`}
               </pre>
             </div>
           </div>
