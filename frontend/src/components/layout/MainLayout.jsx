@@ -1,5 +1,6 @@
 import Sidebar from "./Sidebar";
 import Navbar from "./Navbar";
+import ActivityPanel from "./ActivityPanel";
 
 function MainLayout({ children }) {
   return (
@@ -7,14 +8,16 @@ function MainLayout({ children }) {
 
       <Sidebar />
 
-      <div className="flex-1 min-h-screen">
-
+      <div className="flex-1 min-h-screen flex flex-col">
         <Navbar />
 
-        <div className="p-10">
-          {children}
-        </div>
+        <div className="flex flex-1">
+          <div className="flex-1 p-10">
+            {children}
+          </div>
 
+          <ActivityPanel />
+        </div>
       </div>
 
     </div>

@@ -2,11 +2,21 @@ import { useState } from "react";
 import { Hash } from "lucide-react";
 import { createOrderApi } from "../../api/orderApi";
 import { buildOrderPayload } from "../../utils/orderPayload";
+import { useActivity } from "../../context/ActivityContext";
+import { useToast } from "../../context/ToastContext";
 
 function OrderForm() {
-  const [storeUrl, setStoreUrl] = useState("");
-  const [token, setToken] = useState("");
-  const [variantId, setVariantId] = useState("");
+  const { addActivity } = useActivity();
+  const { showToast } = useToast();
+  const [storeUrl, setStoreUrl] = useState(
+    () => localStorage.getItem("order_storeUrl") ?? "",
+  );
+  const [token, setToken] = useState(
+    () => localStorage.getItem("order_token") ?? "",
+  );
+  const [variantId, setVariantId] = useState(
+    () => localStorage.getItem("order_variantId") ?? "",
+  );
   const [quantity, setQuantity] = useState(1);
   const [price, setPrice] = useState(10);
 
@@ -26,14 +36,17 @@ function OrderForm() {
 
       await createOrderApi({ ...orderData, storeUrl, token });
 
-      alert("Order Created Successfully");
+      addActivity(
+        "order",
+        `Order created on ${storeUrl} — variant ${variantId}, qty ${quantity}`,
+      );
+      showToast("Order created successfully!", "success");
 
       setQuantity(1);
       setPrice(10);
     } catch (error) {
       console.log(error);
-
-      alert("Failed To Create Order");
+      showToast("Failed to create order. Check console for details.", "error");
     } finally {
       setLoading(false);
     }
@@ -41,7 +54,7 @@ function OrderForm() {
 
   return (
     <div className="grid grid-cols-3 gap-8">
-      <div className="col-span-2 bg-white rounded-3xl shadow-sm border border-gray-120000 p-8">
+      <div className="col-span-3 bg-white rounded-3xl shadow-sm border border-gray-200 p-8">
         <div className="flex items-center gap-10 mb-8">
           {/* <div className="w-16 h-16 rounded-2xl bg-purple-100 flex items-center justify-center">
             <ShoppingBag className="text-purple-600" size={30} />
@@ -65,8 +78,11 @@ function OrderForm() {
               type="text"
               placeholder="your-store.myshopify.com"
               value={storeUrl}
-              onChange={(e) => setStoreUrl(e.target.value)}
-              className="w-full border-2 border-gray-200 focus:border-purple-500 outline-none rounded-2xl py-4 px-4 text-lg"
+              onChange={(e) => {
+                setStoreUrl(e.target.value);
+                localStorage.setItem("order_storeUrl", e.target.value);
+              }}
+              className="w-full bg-white border-2 border-gray-300 focus:border-purple-500 outline-none rounded-2xl py-4 px-4 text-lg transition-colors"
               required
             />
           </div>
@@ -79,8 +95,11 @@ function OrderForm() {
               type="text"
               placeholder="shpat_..."
               value={token}
-              onChange={(e) => setToken(e.target.value)}
-              className="w-full border-2 border-gray-200 focus:border-purple-500 outline-none rounded-2xl py-4 px-4 text-lg"
+              onChange={(e) => {
+                setToken(e.target.value);
+                localStorage.setItem("order_token", e.target.value);
+              }}
+              className="w-full bg-white border-2 border-gray-300 focus:border-purple-500 outline-none rounded-2xl py-4 px-4 text-lg transition-colors"
               required
             />
           </div>
@@ -94,8 +113,11 @@ function OrderForm() {
               <input
                 type="number"
                 value={variantId}
-                onChange={(e) => setVariantId(e.target.value)}
-                className="w-full border-2 border-gray-200 focus:border-purple-500 outline-none rounded-2xl py-4 px-4 text-lg"
+                onChange={(e) => {
+                  setVariantId(e.target.value);
+                  localStorage.setItem("order_variantId", e.target.value);
+                }}
+                className="w-full bg-white border-2 border-gray-300 focus:border-purple-500 outline-none rounded-2xl py-4 px-4 text-lg transition-colors"
               />
             </div>
 
@@ -114,7 +136,7 @@ function OrderForm() {
                   type="number"
                   value={quantity}
                   onChange={(e) => setQuantity(e.target.value)}
-                  className="w-full border-2 border-gray-200 focus:border-purple-500 outline-none rounded-2xl py-4 pl-12 pr-4 text-lg"
+                  className="w-full bg-white border-2 border-gray-300 focus:border-purple-500 outline-none rounded-2xl py-4 pl-12 pr-4 text-lg transition-colors"
                 />
               </div>
             </div>
@@ -128,7 +150,7 @@ function OrderForm() {
                 type="number"
                 value={price}
                 onChange={(e) => setPrice(e.target.value)}
-                className="w-full border-2 border-gray-200 focus:border-purple-500 outline-none rounded-2xl py-4 px-4 text-lg"
+                className="w-full bg-white border-2 border-gray-300 focus:border-purple-500 outline-none rounded-2xl py-4 px-4 text-lg transition-colors"
               />
             </div>
           </div>

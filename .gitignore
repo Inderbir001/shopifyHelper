@@ -1,7 +1,40 @@
-node_modules
+# Dependencies
+node_modules/
+
+# Environment variables
 .env
-dist
-coverage
-backend/playwright-user-data
-backend/test-results
+.env.local
+.env.*.local
+
+# Build output
+dist/
+build/
+coverage/
+
+# Playwright
+playwright-user-data/
+backend/playwright-user-data/
+test-results/
+backend/test-results/
+playwright-report/
+
+# Shopify automation artifacts
+auth-partner.json
 backend/auth-partner.json
+stores/
+backend/stores/
+temp-store-env/
+backend/temp-store-env/
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp

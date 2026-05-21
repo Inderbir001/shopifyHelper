@@ -375,7 +375,20 @@ export async function createStoreAutomation(storeData) {
       variableProducts,
       digitalProducts,
     };
-    console.log("/n/n✅ Final result:", JSON.stringify(result, null, 2));
+    console.log("\n\n✅ Final result:", JSON.stringify(result, null, 2));
+
+    const envContent = `SHOPIFY_STORE=${storeUrl}
+SHOPIFY_ACCESS_TOKEN=${token}
+SHOPIFY_API_VERSION=${apiVersion}
+PARTNER_URL=${partnerUrl}
+APP_URL=${appUrl}
+SIMPLE_PRODUCTS_JSON=${JSON.stringify(simpleProducts)}
+VARIABLE_PRODUCTS_JSON=${JSON.stringify(variableProducts)}
+DIGITAL_PRODUCTS=${JSON.stringify(digitalProducts)}
+`;
+    fs.writeFileSync(`./stores/${storeData.storeName}.env`, envContent);
+    console.log(`✅ Env saved to ./stores/${storeData.storeName}.env`);
+
     return result;
   } finally {
     await context.close();
