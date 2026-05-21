@@ -63,7 +63,7 @@ export async function importProductsFromCSV(filePath, store, token) {
             const productPayload = groupedProducts[handle];
             const created = await createProduct(store, token, productPayload);
             const product = created.product;
-            const type = (productPayload.product_type || "").toLowerCase();
+            const type = (productPayload.title || "").toLowerCase();
 
             console.log(`✅ Product Created: ${productPayload.title} (ID: ${product.id})`);
 

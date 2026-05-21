@@ -2,7 +2,8 @@ import { createOrderService } from "../services/orderService.js";
 
 export const createOrder = async (req, res) => {
   try {
-    const result = await createOrderService(req.body);
+    const { storeUrl, token, ...orderData } = req.body;
+    const result = await createOrderService(orderData, storeUrl, token);
     res.json(result);
   } catch (error) {
     const shopifyError = error.response?.data;

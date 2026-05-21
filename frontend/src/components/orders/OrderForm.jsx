@@ -1,16 +1,16 @@
-import { use, useState } from "react";
-import { Mail, Package, Hash, ShoppingBag } from "lucide-react";
+import { useState } from "react";
+import { Hash } from "lucide-react";
 import { createOrderApi } from "../../api/orderApi";
 import { buildOrderPayload } from "../../utils/orderPayload";
 
 function OrderForm() {
-  const [variantId, setVariantId] = useState(46246627672322);
+  const [storeUrl, setStoreUrl] = useState("");
+  const [token, setToken] = useState("");
+  const [variantId, setVariantId] = useState("");
   const [quantity, setQuantity] = useState(1);
   const [price, setPrice] = useState(10);
 
   const [loading, setLoading] = useState(false);
-
-  const total = quantity * price;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -24,7 +24,7 @@ function OrderForm() {
         price,
       });
 
-      await createOrderApi(orderData);
+      await createOrderApi({ ...orderData, storeUrl, token });
 
       alert("Order Created Successfully");
 
@@ -41,7 +41,7 @@ function OrderForm() {
 
   return (
     <div className="grid grid-cols-3 gap-8">
-      <div className="col-span-1 bg-white rounded-3xl shadow-sm border border-gray-120000 p-8">
+      <div className="col-span-2 bg-white rounded-3xl shadow-sm border border-gray-120000 p-8">
         <div className="flex items-center gap-10 mb-8">
           {/* <div className="w-16 h-16 rounded-2xl bg-purple-100 flex items-center justify-center">
             <ShoppingBag className="text-purple-600" size={30} />
@@ -57,6 +57,34 @@ function OrderForm() {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
+          <div>
+            <label className="font-semibold text-gray-700 block mb-3">
+              Store URL
+            </label>
+            <input
+              type="text"
+              placeholder="your-store.myshopify.com"
+              value={storeUrl}
+              onChange={(e) => setStoreUrl(e.target.value)}
+              className="w-full border-2 border-gray-200 focus:border-purple-500 outline-none rounded-2xl py-4 px-4 text-lg"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="font-semibold text-gray-700 block mb-3">
+              Access Token
+            </label>
+            <input
+              type="text"
+              placeholder="shpat_..."
+              value={token}
+              onChange={(e) => setToken(e.target.value)}
+              className="w-full border-2 border-gray-200 focus:border-purple-500 outline-none rounded-2xl py-4 px-4 text-lg"
+              required
+            />
+          </div>
+
           <div className="grid grid-cols-2 gap-5">
             <div>
               <label className="font-semibold text-gray-700 block mb-3">

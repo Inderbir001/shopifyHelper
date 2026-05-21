@@ -3,6 +3,7 @@ import fs from "fs";
 import dotenv from "dotenv";
 
 import { importProductsFromCSV } from "../../services/shopify/importCsvService.js";
+import { setupMarkets } from "./setupMarkets.js";
 
 dotenv.config();
 
@@ -360,7 +361,9 @@ export async function createStoreAutomation(storeData) {
     const { simpleProducts, variableProducts, digitalProducts } =
       await importProducts(storeData.storeName, storeUrl, token);
 
-    return {
+    await setupMarkets(storeUrl, token);
+    console.log("✅ Markets configured");
+    const result = {
       success: true,
       storeName: storeData.storeName,
       storeUrl,
@@ -372,6 +375,8 @@ export async function createStoreAutomation(storeData) {
       variableProducts,
       digitalProducts,
     };
+    console.log("/n/n✅ Final result:", JSON.stringify(result, null, 2));
+    return result;
   } finally {
     await context.close();
   }
