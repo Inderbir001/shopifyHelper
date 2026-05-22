@@ -1,4 +1,4 @@
-import { createContext, useContext, useRef, useState } from "react";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { createStoreApi } from "../api/storeApi";
 import { useActivity } from "./ActivityContext";
 import { useToast } from "./ToastContext";
@@ -15,8 +15,10 @@ export function StoreCreationProvider({ children }) {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
   const [cancelled, setCancelled] = useState(false);
+  const [logs, setLogs] = useState([]);
 
   const abortRef = useRef(null);
+  const esRef = useRef(null);
 
   const setStoreName = (name) => {
     setStoreNameState(name);
@@ -28,7 +30,16 @@ export function StoreCreationProvider({ children }) {
     setCancelled(false);
     setLoading(true);
     setResult(null);
+    setLogs([]);
     abortRef.current = new AbortController();
+
+    // open SSE stream
+    const es = new EventSource("http://localhost:5000/api/stores/stream");
+    esRef.current = es;
+    es.onmessage = (e) => {
+      const { message } = JSON.parse(e.data);
+      setLogs((prev) => [...prev, message]);
+    };
 
     try {
       const response = await createStoreApi(
@@ -44,11 +55,12 @@ export function StoreCreationProvider({ children }) {
         setCancelled(true);
         showToast("Store creation cancelled.", "error");
       } else {
-        console.log(error);
         showToast("Failed to create store. Check console for details.", "error");
       }
     } finally {
       setLoading(false);
+      es.close();
+      esRef.current = null;
     }
   };
 
@@ -58,9 +70,12 @@ export function StoreCreationProvider({ children }) {
 
   const clearResult = () => setResult(null);
 
+  // cleanup on unmount
+  useEffect(() => () => esRef.current?.close(), []);
+
   return (
     <StoreCreationContext.Provider
-      value={{ storeName, setStoreName, loading, result, cancelled, startCreation, cancelCreation, clearResult }}
+      value={{ storeName, setStoreName, loading, result, cancelled, logs, startCreation, cancelCreation, clearResult }}
     >
       {children}
     </StoreCreationContext.Provider>

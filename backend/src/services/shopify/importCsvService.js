@@ -1,9 +1,9 @@
 import fs from "fs";
 import csv from "csv-parser";
 
-import { createProduct } from "./productService.js";
+import { createProduct, updateVariantShippingDetails } from "./productService.js";
 
-export async function importProductsFromCSV(filePath, store, token) {
+export async function importProductsFromCSV(filePath, store, token, locationGid = null) {
   const groupedProducts = {};
 
   return new Promise((resolve, reject) => {
@@ -66,6 +66,13 @@ export async function importProductsFromCSV(filePath, store, token) {
             const type = (productPayload.title || "").toLowerCase();
 
             console.log(`✅ Product Created: ${productPayload.title} (ID: ${product.id})`);
+
+            if (locationGid) {
+              for (const variant of product.variants) {
+                await updateVariantShippingDetails(store, token, variant, locationGid);
+              }
+              console.log(`   ↳ Inventory moved to US Warehouse, HS code + COO set`);
+            }
 
             if (type.includes("digital")) {
               digitalProducts.push({

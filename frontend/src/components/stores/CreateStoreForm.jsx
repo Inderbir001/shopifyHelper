@@ -1,4 +1,5 @@
-import { Package, Loader2, XCircle, CheckCircle2 } from "lucide-react";
+import { useEffect, useRef } from "react";
+import { Package, Loader2, XCircle, CheckCircle2, Terminal } from "lucide-react";
 import { useStoreCreation } from "../../context/StoreCreationContext";
 
 function CreateStoreForm() {
@@ -8,9 +9,15 @@ function CreateStoreForm() {
     loading,
     result,
     cancelled,
+    logs,
     startCreation,
     cancelCreation,
   } = useStoreCreation();
+
+  const logsEndRef = useRef(null);
+  useEffect(() => {
+    logsEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [logs]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -83,6 +90,61 @@ function CreateStoreForm() {
           )}
         </form>
       </div>
+
+      {(loading || logs.length > 0) && (
+        <div className="col-span-3 bg-[#0B1120] rounded-0xl border border-slate-800 overflow-hidden">
+          <div className="px-8 py-5 border-slate-800 flex items-center justify-between">
+            <div>
+              <h3 className="text-2xl font-bold text-black">Live Logs</h3>
+              <p className="text-slate-400 mt-1 text-sm">Real-time store creation progress</p>
+            </div>
+            <div className="flex items-center gap-2 text-sm font-medium">
+              {loading ? (
+                <>
+                  <Loader2 size={18} className="animate-spin text-purple-400" />
+                  <span className="text-purple-400">Running...</span>
+                </>
+              ) : (
+                <>
+                  <CheckCircle2 size={18} className="text-emerald-400" />
+                  <span className="text-emerald-400">Done</span>
+                </>
+              )}
+            </div>
+          </div>
+
+          <div
+            style={{
+              backgroundColor: "#0B1120",
+              borderRadius: "0rem",
+              padding: "2rem",
+              maxHeight: "20rem",
+              overflowY: "auto",
+            }}
+          >
+            <pre
+              style={{
+                fontSize: "0.875rem",
+                lineHeight: "2rem",
+                whiteSpace: "pre-wrap",
+                wordBreak: "break-all",
+                fontFamily: "monospace",
+                margin: 0,
+              }}
+            >
+              {logs.map((line, i) => (
+                <span
+                  key={i}
+                  style={{ color: line.startsWith("[ERROR]") ? "#f87171" : "#4ade80", display: "block" }}
+                >
+                  {line}
+                </span>
+              ))}
+              <span ref={logsEndRef} />
+            </pre>
+          </div>
+        </div>
+      )}
 
       {result && (
         <div className="col-span-3 bg-[#0B1120] rounded-0xl border border-slate-800 overflow-hidden">

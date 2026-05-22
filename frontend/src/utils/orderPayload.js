@@ -92,7 +92,7 @@ export const buildOrderPayload = ({
         "shopify-helper", "test-order", "sale", "featured", "new",
         "premium", "bestseller", "summer", "winter", "trending",
       ],
-      { min: 2, max: 5 },
+      { min: 2, max: 3 },
     )
     .join(","),
   note = "Created from Shopify Helper",

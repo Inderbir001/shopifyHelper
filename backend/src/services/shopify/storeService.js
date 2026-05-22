@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 
 import { importProductsFromCSV } from "../../services/shopify/importCsvService.js";
 import { setupMarkets } from "./setupMarkets.js";
+import { setupShipping } from "./setupShippingService.js";
 
 dotenv.config();
 
@@ -309,7 +310,7 @@ async function fetchApiVersion(storePage) {
 }
 // ─── Product Import ───────────────────────────────────────────────────────────
 
-async function importProducts(storeName, storeUrl, token) {
+async function importProducts(storeName, storeUrl, token, locationGid = null) {
   const tempEnvPath = `./temp-store-env/${storeName}.env`;
 
   fs.writeFileSync(
@@ -321,6 +322,7 @@ async function importProducts(storeName, storeUrl, token) {
     "./csv/products.csv",
     storeUrl,
     token,
+    locationGid,
   );
   console.log("✅ Products imported");
 
@@ -358,11 +360,14 @@ export async function createStoreAutomation(storeData) {
     const partnerUrl = page.url();
     const appUrl = `https://admin.shopify.com/store/${storeData.storeName}/apps/mcsl-qa`;
 
-    const { simpleProducts, variableProducts, digitalProducts } =
-      await importProducts(storeData.storeName, storeUrl, token);
-
     await setupMarkets(storeUrl, token);
     console.log("✅ Markets configured");
+
+    const { locationId } = await setupShipping(storeUrl, token);
+    console.log("✅ Shipping configured");
+
+    const { simpleProducts, variableProducts, digitalProducts } =
+      await importProducts(storeData.storeName, storeUrl, token, locationId);
     const result = {
       success: true,
       storeName: storeData.storeName,
