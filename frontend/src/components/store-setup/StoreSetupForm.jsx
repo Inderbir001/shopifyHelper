@@ -6,7 +6,7 @@ function StoreSetupForm({ title, description, onRun }) {
   const [token, setToken] = useState(() => localStorage.getItem("setup_token") ?? "");
   const [loading, setLoading] = useState(false);
   const [logs, setLogs] = useState([]);
-  const [status, setStatus] = useState(null); // null | "success" | "error"
+  const [status, setStatus] = useState(null);
   const logsEndRef = useRef(null);
   const esRef = useRef(null);
 
@@ -41,37 +41,39 @@ function StoreSetupForm({ title, description, onRun }) {
     }
   };
 
+  const inputCls = "w-full bg-white dark:bg-slate-900 border-2 border-gray-300 dark:border-slate-600 focus:border-purple-500 outline-none rounded-xl py-2.5 px-3 text-sm text-gray-800 dark:text-slate-100 placeholder:text-gray-400 dark:placeholder:text-slate-500 transition-colors disabled:opacity-60";
+
   return (
-    <div className="grid grid-cols-3 gap-8">
-      <div className="col-span-3 bg-white rounded-3xl shadow-sm border border-gray-200 p-6">
+    <div className="grid grid-cols-3 gap-6">
+      <div className="col-span-3 bg-white dark:bg-slate-800 rounded-3xl shadow-sm border border-gray-200 dark:border-slate-700 p-6">
         <div className="mb-5">
-          <h2 className="text-2xl font-bold text-gray-800">{title}</h2>
-          <p className="text-gray-500 mt-0.5 text-sm">{description}</p>
+          <h2 className="text-2xl font-bold text-gray-800 dark:text-slate-100">{title}</h2>
+          <p className="text-gray-500 dark:text-slate-400 mt-0.5 text-sm">{description}</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="font-semibold text-gray-700 block mb-1.5 text-sm">Store URL</label>
+            <label className="font-semibold text-gray-700 dark:text-slate-300 block mb-1.5 text-sm">Store URL</label>
             <input
               type="text"
               placeholder="your-store.myshopify.com"
               value={store}
               onChange={(e) => { setStore(e.target.value); localStorage.setItem("setup_store", e.target.value); }}
               disabled={loading}
-              className="w-full bg-white border-2 border-gray-300 focus:border-purple-500 outline-none rounded-xl py-2.5 px-3 text-sm transition-colors disabled:opacity-60"
+              className={inputCls}
               required
             />
           </div>
 
           <div>
-            <label className="font-semibold text-gray-700 block mb-1.5 text-sm">Access Token</label>
+            <label className="font-semibold text-gray-700 dark:text-slate-300 block mb-1.5 text-sm">Access Token</label>
             <input
               type="text"
               placeholder="shpat_..."
               value={token}
               onChange={(e) => { setToken(e.target.value); localStorage.setItem("setup_token", e.target.value); }}
               disabled={loading}
-              className="w-full bg-white border-2 border-gray-300 focus:border-purple-500 outline-none rounded-xl py-2.5 px-3 text-sm transition-colors disabled:opacity-60"
+              className={inputCls}
               required
             />
           </div>
@@ -94,8 +96,8 @@ function StoreSetupForm({ title, description, onRun }) {
       </div>
 
       {(loading || logs.length > 0) && (
-        <div className="col-span-3 bg-[#0B1120] rounded-0xl border border-slate-800 overflow-hidden">
-          <div className="px-6 py-4 border-slate-800 flex items-center justify-between">
+        <div className="col-span-3 bg-[#0B1120] border border-slate-800 overflow-hidden rounded-2xl">
+          <div className="px-6 py-4 border-b border-slate-800 flex items-center justify-between">
             <div>
               <h3 className="text-base font-bold text-white">Live Logs</h3>
               <p className="text-slate-400 mt-0.5 text-xs">Real-time progress</p>
@@ -103,24 +105,24 @@ function StoreSetupForm({ title, description, onRun }) {
             <div className="flex items-center gap-2 text-sm font-medium">
               {loading ? (
                 <>
-                  <Loader2 size={18} className="btn-spinner text-purple-400" />
-                  <span className="text-purple-400">Running...</span>
+                  <Loader2 size={16} className="btn-spinner text-purple-400" />
+                  <span className="text-purple-400 text-xs">Running...</span>
                 </>
               ) : status === "success" ? (
                 <>
-                  <CheckCircle2 size={18} className="text-emerald-400" />
-                  <span className="text-emerald-400">Done</span>
+                  <CheckCircle2 size={16} className="text-emerald-400" />
+                  <span className="text-emerald-400 text-xs">Done</span>
                 </>
               ) : (
                 <>
-                  <XCircle size={18} className="text-red-400" />
-                  <span className="text-red-400">Failed</span>
+                  <XCircle size={16} className="text-red-400" />
+                  <span className="text-red-400 text-xs">Failed</span>
                 </>
               )}
             </div>
           </div>
-          <div style={{ backgroundColor: "#0B1120", borderRadius: "0rem", padding: "2rem", maxHeight: "20rem", overflowY: "auto" }}>
-            <pre style={{ fontSize: "0.875rem", lineHeight: "2rem", whiteSpace: "pre-wrap", wordBreak: "break-all", fontFamily: "monospace", margin: 0 }}>
+          <div style={{ backgroundColor: "#0B1120", padding: "1.5rem", maxHeight: "18rem", overflowY: "auto" }}>
+            <pre style={{ fontSize: "0.8rem", lineHeight: "1.8rem", whiteSpace: "pre-wrap", wordBreak: "break-all", fontFamily: "monospace", margin: 0 }}>
               {logs.map((line, i) => (
                 <span key={i} style={{ color: line.startsWith("[ERROR]") ? "#f87171" : "#4ade80", display: "block" }}>{line}</span>
               ))}
@@ -131,21 +133,21 @@ function StoreSetupForm({ title, description, onRun }) {
       )}
 
       {status === "success" && (
-        <div className="col-span-3 bg-emerald-50 border border-emerald-200 rounded-3xl p-6 flex items-center gap-4">
-          <CheckCircle2 className="text-emerald-500 shrink-0" size={28} />
+        <div className="col-span-3 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-3xl p-5 flex items-center gap-4">
+          <CheckCircle2 className="text-emerald-500 shrink-0" size={24} />
           <div>
-            <p className="font-semibold text-emerald-800 text-lg">Completed successfully</p>
-            <p className="text-emerald-600 text-sm mt-1">{title} finished with no errors.</p>
+            <p className="font-semibold text-emerald-800 dark:text-emerald-300 text-sm">{title} completed successfully</p>
+            <p className="text-emerald-600 dark:text-emerald-500 text-xs mt-0.5">Finished with no errors.</p>
           </div>
         </div>
       )}
 
       {status === "error" && (
-        <div className="col-span-3 bg-red-50 border border-red-200 rounded-3xl p-6 flex items-center gap-4">
-          <XCircle className="text-red-500 shrink-0" size={28} />
+        <div className="col-span-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-3xl p-5 flex items-center gap-4">
+          <XCircle className="text-red-500 shrink-0" size={24} />
           <div>
-            <p className="font-semibold text-red-800 text-lg">Operation failed</p>
-            <p className="text-red-600 text-sm mt-1">Check the logs above for details.</p>
+            <p className="font-semibold text-red-800 dark:text-red-300 text-sm">Operation failed</p>
+            <p className="text-red-600 dark:text-red-500 text-xs mt-0.5">Check the logs above for details.</p>
           </div>
         </div>
       )}

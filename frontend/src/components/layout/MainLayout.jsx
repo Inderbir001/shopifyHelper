@@ -4,7 +4,7 @@ import ActivityPanel from "./ActivityPanel";
 
 function MainLayout({ children }) {
   return (
-    <div className="flex bg-[#F5F7FB]">
+    <div className="flex bg-[#F5F7FB] dark:bg-slate-950">
 
       <Sidebar />
 
@@ -12,7 +12,7 @@ function MainLayout({ children }) {
         <Navbar />
 
         <div className="flex flex-1">
-          <div className="flex-1 p-10">
+          <div className="flex-1 p-10 dark:bg-slate-950">
             {children}
           </div>
 

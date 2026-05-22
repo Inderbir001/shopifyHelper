@@ -1,18 +1,9 @@
 import { useEffect, useRef } from "react";
-import { Package, Loader2, XCircle, CheckCircle2, Terminal } from "lucide-react";
+import { Package, Loader2, XCircle, CheckCircle2 } from "lucide-react";
 import { useStoreCreation } from "../../context/StoreCreationContext";
 
 function CreateStoreForm() {
-  const {
-    storeName,
-    setStoreName,
-    loading,
-    result,
-    cancelled,
-    logs,
-    startCreation,
-    cancelCreation,
-  } = useStoreCreation();
+  const { storeName, setStoreName, loading, result, cancelled, logs, startCreation, cancelCreation } = useStoreCreation();
 
   const logsEndRef = useRef(null);
   useEffect(() => {
@@ -25,18 +16,18 @@ function CreateStoreForm() {
   };
 
   return (
-    <div className="grid grid-cols-3 gap-8">
-      <div className="col-span-3 bg-white rounded-3xl shadow-sm border border-gray-200 p-6">
+    <div className="grid grid-cols-3 gap-6">
+      <div className="col-span-3 bg-white dark:bg-slate-800 rounded-3xl shadow-sm border border-gray-200 dark:border-slate-700 p-6">
         <div className="mb-5">
-          <h2 className="text-2xl font-bold text-gray-800">Create Store</h2>
-          <p className="text-gray-500 mt-0.5 text-sm">
+          <h2 className="text-2xl font-bold text-gray-800 dark:text-slate-100">Create Store</h2>
+          <p className="text-gray-500 dark:text-slate-400 mt-0.5 text-sm">
             Create Shopify development stores automatically
           </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="font-semibold text-gray-700 block mb-1.5 text-sm">
+            <label className="font-semibold text-gray-700 dark:text-slate-300 block mb-1.5 text-sm">
               Store Name
             </label>
             <input
@@ -45,7 +36,7 @@ function CreateStoreForm() {
               value={storeName}
               onChange={(e) => setStoreName(e.target.value)}
               disabled={loading}
-              className="w-full bg-white border-2 border-gray-300 focus:border-purple-500 outline-none rounded-xl py-2.5 px-3 text-sm transition-colors disabled:opacity-60"
+              className="w-full bg-white dark:bg-slate-900 border-2 border-gray-300 dark:border-slate-600 focus:border-purple-500 outline-none rounded-xl py-2.5 px-3 text-sm text-gray-800 dark:text-slate-100 placeholder:text-gray-400 dark:placeholder:text-slate-500 transition-colors disabled:opacity-60"
               required
             />
           </div>
@@ -73,7 +64,7 @@ function CreateStoreForm() {
               <button
                 type="button"
                 onClick={cancelCreation}
-                className="mt-2 px-6 py-3 rounded-xl text-base font-semibold border-2 border-red-400 text-red-500 hover:bg-red-50 transition-all flex items-center gap-2 shrink-0"
+                className="mt-2 px-6 py-3 rounded-xl text-base font-semibold border-2 border-red-400 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all flex items-center gap-2 shrink-0"
               >
                 <XCircle size={18} className="shrink-0" />
                 <span>Cancel</span>
@@ -82,59 +73,36 @@ function CreateStoreForm() {
           </div>
 
           {cancelled && (
-            <p className="text-red-500 text-sm font-medium">
-              Store creation was cancelled.
-            </p>
+            <p className="text-red-500 text-sm font-medium">Store creation was cancelled.</p>
           )}
         </form>
       </div>
 
       {(loading || logs.length > 0) && (
-        <div className="col-span-3 bg-[#0B1120] rounded-0xl border border-slate-800 overflow-hidden">
-          <div className="px-6 py-4 border-slate-800 flex items-center justify-between">
+        <div className="col-span-3 bg-[#0B1120] rounded-2xl border border-slate-800 overflow-hidden">
+          <div className="px-6 py-4 border-b border-slate-800 flex items-center justify-between">
             <div>
               <h3 className="text-base font-bold text-white">Live Logs</h3>
               <p className="text-slate-400 mt-0.5 text-xs">Real-time store creation progress</p>
             </div>
-            <div className="flex items-center gap-2 text-sm font-medium">
+            <div className="flex items-center gap-2 font-medium">
               {loading ? (
                 <>
-                  <Loader2 size={18} className="btn-spinner text-purple-400" />
-                  <span className="text-purple-400">Running...</span>
+                  <Loader2 size={16} className="btn-spinner text-purple-400" />
+                  <span className="text-purple-400 text-xs">Running...</span>
                 </>
               ) : (
                 <>
-                  <CheckCircle2 size={18} className="text-emerald-400" />
-                  <span className="text-emerald-400">Done</span>
+                  <CheckCircle2 size={16} className="text-emerald-400" />
+                  <span className="text-emerald-400 text-xs">Done</span>
                 </>
               )}
             </div>
           </div>
-
-          <div
-            style={{
-              backgroundColor: "#0B1120",
-              borderRadius: "0rem",
-              padding: "2rem",
-              maxHeight: "20rem",
-              overflowY: "auto",
-            }}
-          >
-            <pre
-              style={{
-                fontSize: "0.875rem",
-                lineHeight: "2rem",
-                whiteSpace: "pre-wrap",
-                wordBreak: "break-all",
-                fontFamily: "monospace",
-                margin: 0,
-              }}
-            >
+          <div style={{ backgroundColor: "#0B1120", padding: "1.5rem", maxHeight: "18rem", overflowY: "auto" }}>
+            <pre style={{ fontSize: "0.8rem", lineHeight: "1.8rem", whiteSpace: "pre-wrap", wordBreak: "break-all", fontFamily: "monospace", margin: 0 }}>
               {logs.map((line, i) => (
-                <span
-                  key={i}
-                  style={{ color: line.startsWith("[ERROR]") ? "#f87171" : "#4ade80", display: "block" }}
-                >
+                <span key={i} style={{ color: line.startsWith("[ERROR]") ? "#f87171" : "#4ade80", display: "block" }}>
                   {line}
                 </span>
               ))}
@@ -145,41 +113,19 @@ function CreateStoreForm() {
       )}
 
       {result && (
-        <div className="col-span-3 bg-[#0B1120] rounded-0xl border border-slate-800 overflow-hidden">
-          <div className="px-6 py-4 border-slate-800 flex items-center justify-between">
+        <div className="col-span-3 bg-[#0B1120] rounded-2xl border border-slate-800 overflow-hidden">
+          <div className="px-6 py-4 border-b border-slate-800 flex items-center justify-between">
             <div>
-              <h3 className="text-base font-bold text-white">
-                Environment Details
-              </h3>
-              <p className="text-slate-400 mt-0.5 text-xs">
-                Generated store credentials & configuration
-              </p>
+              <h3 className="text-base font-bold text-white">Environment Details</h3>
+              <p className="text-slate-400 mt-0.5 text-xs">Generated store credentials & configuration</p>
             </div>
-            <div className="flex items-center gap-2 text-emerald-400 text-sm font-medium">
-              <CheckCircle2 size={18} />
-              <span>Ready</span>
+            <div className="flex items-center gap-2 text-emerald-400 font-medium">
+              <CheckCircle2 size={16} />
+              <span className="text-xs">Ready</span>
             </div>
           </div>
-
-          <div
-            style={{
-              backgroundColor: "#0B1120",
-              borderRadius: "0rem",
-              padding: "2rem",
-              overflow: "auto",
-            }}
-          >
-            <pre
-              style={{
-                color: "#4ade80",
-                fontSize: "0.875rem",
-                lineHeight: "2rem",
-                whiteSpace: "pre-wrap",
-                wordBreak: "break-all",
-                fontFamily: "monospace",
-                margin: 0,
-              }}
-            >
+          <div style={{ backgroundColor: "#0B1120", padding: "1.5rem", overflow: "auto" }}>
+            <pre style={{ color: "#4ade80", fontSize: "0.8rem", lineHeight: "1.8rem", whiteSpace: "pre-wrap", wordBreak: "break-all", fontFamily: "monospace", margin: 0 }}>
               {`PARTNER_URL = ${result.partnerUrl}
 SHOPIFYURL = ${result.storeUrl}
 APPURL = ${result.appUrl}

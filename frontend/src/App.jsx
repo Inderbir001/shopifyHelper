@@ -12,9 +12,11 @@ import ActivatePaymentPage from "./pages/store-setup/ActivatePaymentPage";
 import { ActivityProvider } from "./context/ActivityContext";
 import { StoreCreationProvider } from "./context/StoreCreationContext";
 import { ToastProvider } from "./context/ToastContext";
+import { ThemeProvider } from "./context/ThemeContext";
 
 function App() {
   return (
+    <ThemeProvider>
     <ToastProvider>
     <ActivityProvider>
     <StoreCreationProvider>
@@ -42,6 +44,7 @@ function App() {
     </StoreCreationProvider>
     </ActivityProvider>
     </ToastProvider>
+    </ThemeProvider>
   );
 }
 

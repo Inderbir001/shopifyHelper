@@ -24,25 +24,12 @@ function OrderForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
       setLoading(true);
-
-      const orderData = buildOrderPayload({
-        variantId,
-        quantity,
-        price,
-        addressPreset,
-      });
-
+      const orderData = buildOrderPayload({ variantId, quantity, price, addressPreset });
       await createOrderApi({ ...orderData, storeUrl, token });
-
-      addActivity(
-        "order",
-        `Order created on ${storeUrl} — variant ${variantId}, qty ${quantity}`,
-      );
+      addActivity("order", `Order created on ${storeUrl} — variant ${variantId}, qty ${quantity}`);
       showToast("Order created successfully!", "success");
-
       setQuantity(1);
       setPrice(10);
     } catch (error) {
@@ -53,100 +40,81 @@ function OrderForm() {
     }
   };
 
+  const inputCls = "w-full bg-white dark:bg-slate-900 border-2 border-gray-300 dark:border-slate-600 focus:border-purple-500 dark:focus:border-purple-500 outline-none rounded-xl py-2.5 px-3 text-sm text-gray-800 dark:text-slate-100 placeholder:text-gray-400 dark:placeholder:text-slate-500 transition-colors disabled:opacity-60";
+
   return (
     <div className="grid grid-cols-3 gap-6">
-      <div className="col-span-3 bg-white rounded-3xl shadow-sm border border-gray-200 p-6">
+      <div className="col-span-3 bg-white dark:bg-slate-800 rounded-3xl shadow-sm border border-gray-200 dark:border-slate-700 p-6">
         <div className="mb-5">
-          <h2 className="text-2xl font-bold text-gray-800">Create New Order</h2>
-          <p className="text-gray-500 mt-0.5 text-sm">Fill order details below</p>
+          <h2 className="text-2xl font-bold text-gray-800 dark:text-slate-100">Create New Order</h2>
+          <p className="text-gray-500 dark:text-slate-400 mt-0.5 text-sm">Fill order details below</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="font-semibold text-gray-700 block mb-1.5 text-sm">
-              Store URL
-            </label>
+            <label className="font-semibold text-gray-700 dark:text-slate-300 block mb-1.5 text-sm">Store URL</label>
             <input
               type="text"
               placeholder="your-store.myshopify.com"
               value={storeUrl}
-              onChange={(e) => {
-                setStoreUrl(e.target.value);
-                localStorage.setItem("order_storeUrl", e.target.value);
-              }}
-              className="w-full bg-white border-2 border-gray-300 focus:border-purple-500 outline-none rounded-xl py-2.5 px-3 text-sm transition-colors"
+              onChange={(e) => { setStoreUrl(e.target.value); localStorage.setItem("order_storeUrl", e.target.value); }}
+              className={inputCls}
               required
             />
           </div>
 
           <div>
-            <label className="font-semibold text-gray-700 block mb-1.5 text-sm">
-              Access Token
-            </label>
+            <label className="font-semibold text-gray-700 dark:text-slate-300 block mb-1.5 text-sm">Access Token</label>
             <input
               type="text"
               placeholder="shpat_..."
               value={token}
-              onChange={(e) => {
-                setToken(e.target.value);
-                localStorage.setItem("order_token", e.target.value);
-              }}
-              className="w-full bg-white border-2 border-gray-300 focus:border-purple-500 outline-none rounded-xl py-2.5 px-3 text-sm transition-colors"
+              onChange={(e) => { setToken(e.target.value); localStorage.setItem("order_token", e.target.value); }}
+              className={inputCls}
               required
             />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="font-semibold text-gray-700 block mb-1.5 text-sm">
-                Variant ID
-              </label>
+              <label className="font-semibold text-gray-700 dark:text-slate-300 block mb-1.5 text-sm">Variant ID</label>
               <input
                 type="number"
                 value={variantId}
-                onChange={(e) => {
-                  setVariantId(e.target.value);
-                  localStorage.setItem("order_variantId", e.target.value);
-                }}
-                className="w-full bg-white border-2 border-gray-300 focus:border-purple-500 outline-none rounded-xl py-2.5 px-3 text-sm transition-colors"
+                onChange={(e) => { setVariantId(e.target.value); localStorage.setItem("order_variantId", e.target.value); }}
+                className={inputCls}
               />
             </div>
 
             <div>
-              <label className="font-semibold text-gray-700 block mb-1.5 text-sm">
-                Quantity
-              </label>
+              <label className="font-semibold text-gray-700 dark:text-slate-300 block mb-1.5 text-sm">Quantity</label>
               <div className="relative">
-                <Hash className="absolute left-3 top-2.5 text-gray-400" size={16} />
+                <Hash className="absolute left-3 top-2.5 text-gray-400 dark:text-slate-500" size={16} />
                 <input
                   type="number"
                   value={quantity}
                   onChange={(e) => setQuantity(e.target.value)}
-                  className="w-full bg-white border-2 border-gray-300 focus:border-purple-500 outline-none rounded-xl py-2.5 pl-9 pr-3 text-sm transition-colors"
+                  className={`${inputCls} pl-9`}
                 />
               </div>
             </div>
 
             <div>
-              <label className="font-semibold text-gray-700 block mb-1.5 text-sm">
-                Price
-              </label>
+              <label className="font-semibold text-gray-700 dark:text-slate-300 block mb-1.5 text-sm">Price</label>
               <input
                 type="number"
                 value={price}
                 onChange={(e) => setPrice(e.target.value)}
-                className="w-full bg-white border-2 border-gray-300 focus:border-purple-500 outline-none rounded-xl py-2.5 px-3 text-sm transition-colors"
+                className={inputCls}
               />
             </div>
 
             <div>
-              <label className="font-semibold text-gray-700 block mb-1.5 text-sm">
-                Shipping Address
-              </label>
+              <label className="font-semibold text-gray-700 dark:text-slate-300 block mb-1.5 text-sm">Shipping Address</label>
               <select
                 value={addressPreset}
                 onChange={(e) => setAddressPreset(e.target.value)}
-                className="w-full bg-white border-2 border-gray-300 focus:border-purple-500 outline-none rounded-xl py-2.5 px-3 text-sm transition-colors cursor-pointer"
+                className={`${inputCls} cursor-pointer`}
               >
                 {Object.entries(ADDRESS_PRESETS).map(([key, preset]) => (
                   <option key={key} value={key}>
