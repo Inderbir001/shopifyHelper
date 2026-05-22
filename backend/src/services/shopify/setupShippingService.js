@@ -253,6 +253,13 @@ async function verifyShipping(shopifyApi, profileId) {
   console.log("✅ Active zones:", zones?.join(", ") ?? "none");
 }
 
+// ─── Exported helper: get or create US Warehouse location ────────────────────
+
+export async function getOrCreateUSLocation(store, token) {
+  const shopifyApi = createShopifyApi(store, token);
+  return createUSLocation(shopifyApi);
+}
+
 // ─── Orchestrator ─────────────────────────────────────────────────────────────
 
 export async function setupShipping(store, token) {

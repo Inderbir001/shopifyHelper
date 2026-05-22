@@ -5,6 +5,10 @@ import Orders from "./pages/Orders";
 import Products from "./pages/Products";
 import Settings from "./pages/Settings";
 import CreateStore from "./pages/CreateStore";
+import SetupMarketsPage from "./pages/store-setup/SetupMarketsPage";
+import SetupShippingPage from "./pages/store-setup/SetupShippingPage";
+import ImportProductsPage from "./pages/store-setup/ImportProductsPage";
+import ActivatePaymentPage from "./pages/store-setup/ActivatePaymentPage";
 import { ActivityProvider } from "./context/ActivityContext";
 import { StoreCreationProvider } from "./context/StoreCreationContext";
 import { ToastProvider } from "./context/ToastContext";
@@ -25,6 +29,14 @@ function App() {
         <Route path="/settings" element={<Settings />} />
 
         <Route path="/create-store" element={<CreateStore />} />
+
+        <Route path="/store-setup/markets" element={<SetupMarketsPage />} />
+
+        <Route path="/store-setup/shipping" element={<SetupShippingPage />} />
+
+        <Route path="/store-setup/products" element={<ImportProductsPage />} />
+
+        <Route path="/store-setup/payment" element={<ActivatePaymentPage />} />
       </Routes>
     </BrowserRouter>
     </StoreCreationProvider>
