@@ -366,6 +366,27 @@ async function importProducts(storeName, storeUrl, token, locationGid = null) {
   return products;
 }
 
+// ─── Payment Provider ─────────────────────────────────────────────────────────
+
+async function activatePaymentProvider(storePage, storeName) {
+  const url = `https://admin.shopify.com/store/${storeName}/settings/payments/third-party-providers/24`;
+  console.log("\n💳 Activating payment provider...");
+  console.log(`   Navigating to: ${url}`);
+
+  await storePage.goto(url, { waitUntil: "domcontentloaded" });
+  await storePage.waitForTimeout(4000);
+
+  console.log("   Clicking Activate button...");
+  await storePage
+    .getByRole("button", { name: "Activate" })
+    .last()
+    .click();
+
+  await storePage.waitForLoadState("networkidle");
+  await storePage.waitForTimeout(3000);
+  console.log("✅ Payment provider activated");
+}
+
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function extractStoreUrl(adminUrl) {
@@ -420,6 +441,12 @@ export async function createStoreAutomation(storeData) {
     console.log("─".repeat(50));
     const { simpleProducts, variableProducts, digitalProducts } =
       await importProducts(storeData.storeName, storeUrl, token, locationId);
+
+    console.log("\n" + "─".repeat(50));
+    console.log("💳 Activating Payment Provider...");
+    console.log("─".repeat(50));
+    await activatePaymentProvider(storePage, storeData.storeName);
+
     const result = {
       success: true,
       storeName: storeData.storeName,

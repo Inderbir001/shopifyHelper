@@ -66,7 +66,7 @@ function CreateStoreForm() {
               ) : (
                 <>
                   <Package className="shrink-0" size={24} />
-                  <span>Create Store & Import Products</span>
+                  <span>Create Store</span>
                 </>
               )}
             </button>
