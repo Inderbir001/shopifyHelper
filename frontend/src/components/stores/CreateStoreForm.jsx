@@ -56,11 +56,11 @@ function CreateStoreForm() {
             <button
               type="submit"
               disabled={loading}
-              className="flex-1 mt-4 bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-5 rounded-2xl text-xl font-semibold hover:opacity-90 transition-all flex items-center justify-center gap-3 disabled:opacity-60"
+              className={`flex-1 mt-4 bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-5 rounded-2xl text-xl font-semibold transition-all flex items-center justify-center gap-3 ${loading ? "opacity-80 cursor-not-allowed pointer-events-none" : "hover:opacity-90"}`}
             >
               {loading ? (
                 <>
-                  <Loader2 className="animate-spin shrink-0" size={24} />
+                  <Loader2 className="btn-spinner shrink-0" size={24} />
                   <span>Creating Store...</span>
                 </>
               ) : (
@@ -101,7 +101,7 @@ function CreateStoreForm() {
             <div className="flex items-center gap-2 text-sm font-medium">
               {loading ? (
                 <>
-                  <Loader2 size={18} className="animate-spin text-purple-400" />
+                  <Loader2 size={18} className="btn-spinner text-purple-400" />
                   <span className="text-purple-400">Running...</span>
                 </>
               ) : (

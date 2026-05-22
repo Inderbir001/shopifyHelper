@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Hash } from "lucide-react";
+import { Hash, Loader2 } from "lucide-react";
 import { createOrderApi } from "../../api/orderApi";
 import { buildOrderPayload, ADDRESS_PRESETS } from "../../utils/orderPayload";
 import { useActivity } from "../../context/ActivityContext";
@@ -176,9 +176,16 @@ function OrderForm() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full mt-4 bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-5 rounded-2xl text-xl font-semibold hover:opacity-90 transition-all"
+            className={`w-full mt-4 bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-5 rounded-2xl text-xl font-semibold transition-all flex items-center justify-center gap-3 ${loading ? "opacity-80 cursor-not-allowed pointer-events-none" : "hover:opacity-90"}`}
           >
-            {loading ? "Creating Order..." : "Create Order"}
+            {loading ? (
+              <>
+                <Loader2 className="btn-spinner shrink-0" size={24} />
+                <span>Creating Order...</span>
+              </>
+            ) : (
+              "Create Order"
+            )}
           </button>
         </form>
       </div>
