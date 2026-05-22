@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Hash } from "lucide-react";
 import { createOrderApi } from "../../api/orderApi";
-import { buildOrderPayload } from "../../utils/orderPayload";
+import { buildOrderPayload, ADDRESS_PRESETS } from "../../utils/orderPayload";
 import { useActivity } from "../../context/ActivityContext";
 import { useToast } from "../../context/ToastContext";
 
@@ -19,7 +19,7 @@ function OrderForm() {
   );
   const [quantity, setQuantity] = useState(1);
   const [price, setPrice] = useState(10);
-
+  const [addressPreset, setAddressPreset] = useState("US");
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
@@ -32,6 +32,7 @@ function OrderForm() {
         variantId,
         quantity,
         price,
+        addressPreset,
       });
 
       await createOrderApi({ ...orderData, storeUrl, token });
@@ -153,6 +154,23 @@ function OrderForm() {
                 className="w-full bg-white border-2 border-gray-300 focus:border-purple-500 outline-none rounded-2xl py-4 px-4 text-lg transition-colors"
               />
             </div>
+          </div>
+
+          <div>
+            <label className="font-semibold text-gray-700 block mb-3">
+              Shipping Address
+            </label>
+            <select
+              value={addressPreset}
+              onChange={(e) => setAddressPreset(e.target.value)}
+              className="w-full bg-white border-2 border-gray-300 focus:border-purple-500 outline-none rounded-2xl py-4 px-4 text-lg transition-colors cursor-pointer"
+            >
+              {Object.entries(ADDRESS_PRESETS).map(([key, preset]) => (
+                <option key={key} value={key}>
+                  {preset.label} — {preset.address1}, {preset.city}, {preset.zip}
+                </option>
+              ))}
+            </select>
           </div>
 
           <button
