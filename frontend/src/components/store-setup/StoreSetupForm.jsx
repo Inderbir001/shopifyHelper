@@ -43,35 +43,35 @@ function StoreSetupForm({ title, description, onRun }) {
 
   return (
     <div className="grid grid-cols-3 gap-8">
-      <div className="col-span-3 bg-white rounded-3xl shadow-sm border border-gray-200 p-8">
-        <div className="mb-8">
-          <h2 className="text-4xl font-bold text-gray-800">{title}</h2>
-          <p className="text-gray-500 mt-1">{description}</p>
+      <div className="col-span-3 bg-white rounded-3xl shadow-sm border border-gray-200 p-6">
+        <div className="mb-5">
+          <h2 className="text-2xl font-bold text-gray-800">{title}</h2>
+          <p className="text-gray-500 mt-0.5 text-sm">{description}</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="font-semibold text-gray-700 block mb-3">Store URL</label>
+            <label className="font-semibold text-gray-700 block mb-1.5 text-sm">Store URL</label>
             <input
               type="text"
               placeholder="your-store.myshopify.com"
               value={store}
               onChange={(e) => { setStore(e.target.value); localStorage.setItem("setup_store", e.target.value); }}
               disabled={loading}
-              className="w-full bg-white border-2 border-gray-300 focus:border-purple-500 outline-none rounded-2xl py-4 px-4 text-lg transition-colors disabled:opacity-60"
+              className="w-full bg-white border-2 border-gray-300 focus:border-purple-500 outline-none rounded-xl py-2.5 px-3 text-sm transition-colors disabled:opacity-60"
               required
             />
           </div>
 
           <div>
-            <label className="font-semibold text-gray-700 block mb-3">Access Token</label>
+            <label className="font-semibold text-gray-700 block mb-1.5 text-sm">Access Token</label>
             <input
               type="text"
               placeholder="shpat_..."
               value={token}
               onChange={(e) => { setToken(e.target.value); localStorage.setItem("setup_token", e.target.value); }}
               disabled={loading}
-              className="w-full bg-white border-2 border-gray-300 focus:border-purple-500 outline-none rounded-2xl py-4 px-4 text-lg transition-colors disabled:opacity-60"
+              className="w-full bg-white border-2 border-gray-300 focus:border-purple-500 outline-none rounded-xl py-2.5 px-3 text-sm transition-colors disabled:opacity-60"
               required
             />
           </div>
@@ -79,11 +79,11 @@ function StoreSetupForm({ title, description, onRun }) {
           <button
             type="submit"
             disabled={loading}
-            className={`w-full mt-4 bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-5 rounded-2xl text-xl font-semibold transition-all flex items-center justify-center gap-3 ${loading ? "opacity-80 cursor-not-allowed pointer-events-none" : "hover:opacity-90"}`}
+            className={`w-full mt-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-3 rounded-xl text-base font-semibold transition-all flex items-center justify-center gap-2 ${loading ? "opacity-80 cursor-not-allowed pointer-events-none" : "hover:opacity-90"}`}
           >
             {loading ? (
               <>
-                <Loader2 className="btn-spinner shrink-0" size={24} />
+                <Loader2 className="btn-spinner shrink-0" size={20} />
                 <span>Running...</span>
               </>
             ) : (
@@ -95,10 +95,10 @@ function StoreSetupForm({ title, description, onRun }) {
 
       {(loading || logs.length > 0) && (
         <div className="col-span-3 bg-[#0B1120] rounded-0xl border border-slate-800 overflow-hidden">
-          <div className="px-8 py-5 border-slate-800 flex items-center justify-between">
+          <div className="px-6 py-4 border-slate-800 flex items-center justify-between">
             <div>
-              <h3 className="text-2xl font-bold text-white">Live Logs</h3>
-              <p className="text-slate-400 mt-1 text-sm">Real-time progress</p>
+              <h3 className="text-base font-bold text-white">Live Logs</h3>
+              <p className="text-slate-400 mt-0.5 text-xs">Real-time progress</p>
             </div>
             <div className="flex items-center gap-2 text-sm font-medium">
               {loading ? (

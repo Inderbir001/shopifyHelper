@@ -54,25 +54,16 @@ function OrderForm() {
   };
 
   return (
-    <div className="grid grid-cols-3 gap-8">
-      <div className="col-span-3 bg-white rounded-3xl shadow-sm border border-gray-200 p-8">
-        <div className="flex items-center gap-10 mb-8">
-          {/* <div className="w-16 h-16 rounded-2xl bg-purple-100 flex items-center justify-center">
-            <ShoppingBag className="text-purple-600" size={30} />
-          </div> */}
-
-          <div>
-            <h2 className="text-4xl font-bold text-gray-800">
-              Create New Order
-            </h2>
-
-            <p className="text-gray-500 mt-1">Fill order details below</p>
-          </div>
+    <div className="grid grid-cols-3 gap-6">
+      <div className="col-span-3 bg-white rounded-3xl shadow-sm border border-gray-200 p-6">
+        <div className="mb-5">
+          <h2 className="text-2xl font-bold text-gray-800">Create New Order</h2>
+          <p className="text-gray-500 mt-0.5 text-sm">Fill order details below</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="font-semibold text-gray-700 block mb-3">
+            <label className="font-semibold text-gray-700 block mb-1.5 text-sm">
               Store URL
             </label>
             <input
@@ -83,13 +74,13 @@ function OrderForm() {
                 setStoreUrl(e.target.value);
                 localStorage.setItem("order_storeUrl", e.target.value);
               }}
-              className="w-full bg-white border-2 border-gray-300 focus:border-purple-500 outline-none rounded-2xl py-4 px-4 text-lg transition-colors"
+              className="w-full bg-white border-2 border-gray-300 focus:border-purple-500 outline-none rounded-xl py-2.5 px-3 text-sm transition-colors"
               required
             />
           </div>
 
           <div>
-            <label className="font-semibold text-gray-700 block mb-3">
+            <label className="font-semibold text-gray-700 block mb-1.5 text-sm">
               Access Token
             </label>
             <input
@@ -100,17 +91,16 @@ function OrderForm() {
                 setToken(e.target.value);
                 localStorage.setItem("order_token", e.target.value);
               }}
-              className="w-full bg-white border-2 border-gray-300 focus:border-purple-500 outline-none rounded-2xl py-4 px-4 text-lg transition-colors"
+              className="w-full bg-white border-2 border-gray-300 focus:border-purple-500 outline-none rounded-xl py-2.5 px-3 text-sm transition-colors"
               required
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-5">
+          <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="font-semibold text-gray-700 block mb-3">
+              <label className="font-semibold text-gray-700 block mb-1.5 text-sm">
                 Variant ID
               </label>
-
               <input
                 type="number"
                 value={variantId}
@@ -118,69 +108,63 @@ function OrderForm() {
                   setVariantId(e.target.value);
                   localStorage.setItem("order_variantId", e.target.value);
                 }}
-                className="w-full bg-white border-2 border-gray-300 focus:border-purple-500 outline-none rounded-2xl py-4 px-4 text-lg transition-colors"
+                className="w-full bg-white border-2 border-gray-300 focus:border-purple-500 outline-none rounded-xl py-2.5 px-3 text-sm transition-colors"
               />
             </div>
 
             <div>
-              <label className="font-semibold text-gray-700 block mb-3">
+              <label className="font-semibold text-gray-700 block mb-1.5 text-sm">
                 Quantity
               </label>
-
               <div className="relative">
-                <Hash
-                  className="absolute left-4 top-4 text-gray-400"
-                  size={20}
-                />
-
+                <Hash className="absolute left-3 top-2.5 text-gray-400" size={16} />
                 <input
                   type="number"
                   value={quantity}
                   onChange={(e) => setQuantity(e.target.value)}
-                  className="w-full bg-white border-2 border-gray-300 focus:border-purple-500 outline-none rounded-2xl py-4 pl-12 pr-4 text-lg transition-colors"
+                  className="w-full bg-white border-2 border-gray-300 focus:border-purple-500 outline-none rounded-xl py-2.5 pl-9 pr-3 text-sm transition-colors"
                 />
               </div>
             </div>
 
             <div>
-              <label className="font-semibold text-gray-700 block mb-3">
+              <label className="font-semibold text-gray-700 block mb-1.5 text-sm">
                 Price
               </label>
-
               <input
                 type="number"
                 value={price}
                 onChange={(e) => setPrice(e.target.value)}
-                className="w-full bg-white border-2 border-gray-300 focus:border-purple-500 outline-none rounded-2xl py-4 px-4 text-lg transition-colors"
+                className="w-full bg-white border-2 border-gray-300 focus:border-purple-500 outline-none rounded-xl py-2.5 px-3 text-sm transition-colors"
               />
             </div>
-          </div>
 
-          <div>
-            <label className="font-semibold text-gray-700 block mb-3">
-              Shipping Address
-            </label>
-            <select
-              value={addressPreset}
-              onChange={(e) => setAddressPreset(e.target.value)}
-              className="w-full bg-white border-2 border-gray-300 focus:border-purple-500 outline-none rounded-2xl py-4 px-4 text-lg transition-colors cursor-pointer"
-            >
-              {Object.entries(ADDRESS_PRESETS).map(([key, preset]) => (
-                <option key={key} value={key}>
-                  {preset.label} — {preset.address1}, {preset.city}, {preset.zip}
-                </option>
-              ))}
-            </select>
+            <div>
+              <label className="font-semibold text-gray-700 block mb-1.5 text-sm">
+                Shipping Address
+              </label>
+              <select
+                value={addressPreset}
+                onChange={(e) => setAddressPreset(e.target.value)}
+                className="w-full bg-white border-2 border-gray-300 focus:border-purple-500 outline-none rounded-xl py-2.5 px-3 text-sm transition-colors cursor-pointer"
+              >
+                {Object.entries(ADDRESS_PRESETS).map(([key, preset]) => (
+                  <option key={key} value={key}>
+                    {preset.label} — {preset.address1}, {preset.city}, {preset.zip}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
 
           <button
             type="submit"
             disabled={loading}
-            className={`w-full mt-4 bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-5 rounded-2xl text-xl font-semibold transition-all flex items-center justify-center gap-3 ${loading ? "opacity-80 cursor-not-allowed pointer-events-none" : "hover:opacity-90"}`}
+            className={`w-full mt-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-3 rounded-xl text-base font-semibold transition-all flex items-center justify-center gap-2 ${loading ? "opacity-80 cursor-not-allowed pointer-events-none" : "hover:opacity-90"}`}
           >
             {loading ? (
               <>
-                <Loader2 className="btn-spinner shrink-0" size={24} />
+                <Loader2 className="btn-spinner shrink-0" size={20} />
                 <span>Creating Order...</span>
               </>
             ) : (

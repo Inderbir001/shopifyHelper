@@ -5,9 +5,9 @@ import { importProductsApi } from "../../api/storeSetupApi";
 function ImportProductsPage() {
   return (
     <MainLayout>
-      <div className="mb-10">
-        <h1 className="text-5xl font-bold text-gray-800">Import Products</h1>
-        <p className="text-gray-500 mt-3 text-lg">Import products from the default CSV file</p>
+      <div className="mb-6">
+        <h1 className="text-3xl font-bold text-gray-800">Import Products</h1>
+        <p className="text-gray-500 mt-1 text-sm">Import products from the default CSV file</p>
       </div>
       <StoreSetupForm
         title="Import Products"

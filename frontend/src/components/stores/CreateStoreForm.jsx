@@ -26,19 +26,17 @@ function CreateStoreForm() {
 
   return (
     <div className="grid grid-cols-3 gap-8">
-      <div className="col-span-3 bg-white rounded-3xl shadow-sm border border-gray-200 p-8">
-        <div className="flex items-center gap-10 mb-8">
-          <div>
-            <h2 className="text-4xl font-bold text-gray-800">Create Store</h2>
-            <p className="text-gray-500 mt-1">
-              Create Shopify development stores automatically
-            </p>
-          </div>
+      <div className="col-span-3 bg-white rounded-3xl shadow-sm border border-gray-200 p-6">
+        <div className="mb-5">
+          <h2 className="text-2xl font-bold text-gray-800">Create Store</h2>
+          <p className="text-gray-500 mt-0.5 text-sm">
+            Create Shopify development stores automatically
+          </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="font-semibold text-gray-700 block mb-3">
+            <label className="font-semibold text-gray-700 block mb-1.5 text-sm">
               Store Name
             </label>
             <input
@@ -47,25 +45,25 @@ function CreateStoreForm() {
               value={storeName}
               onChange={(e) => setStoreName(e.target.value)}
               disabled={loading}
-              className="w-full bg-white border-2 border-gray-300 focus:border-purple-500 outline-none rounded-2xl py-4 px-4 text-lg transition-colors disabled:opacity-60"
+              className="w-full bg-white border-2 border-gray-300 focus:border-purple-500 outline-none rounded-xl py-2.5 px-3 text-sm transition-colors disabled:opacity-60"
               required
             />
           </div>
 
-          <div className="flex gap-4">
+          <div className="flex gap-3">
             <button
               type="submit"
               disabled={loading}
-              className={`flex-1 mt-4 bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-5 rounded-2xl text-xl font-semibold transition-all flex items-center justify-center gap-3 ${loading ? "opacity-80 cursor-not-allowed pointer-events-none" : "hover:opacity-90"}`}
+              className={`flex-1 mt-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-3 rounded-xl text-base font-semibold transition-all flex items-center justify-center gap-2 ${loading ? "opacity-80 cursor-not-allowed pointer-events-none" : "hover:opacity-90"}`}
             >
               {loading ? (
                 <>
-                  <Loader2 className="btn-spinner shrink-0" size={24} />
+                  <Loader2 className="btn-spinner shrink-0" size={20} />
                   <span>Creating Store...</span>
                 </>
               ) : (
                 <>
-                  <Package className="shrink-0" size={24} />
+                  <Package className="shrink-0" size={20} />
                   <span>Create Store</span>
                 </>
               )}
@@ -75,9 +73,9 @@ function CreateStoreForm() {
               <button
                 type="button"
                 onClick={cancelCreation}
-                className="mt-4 px-8 py-5 rounded-2xl text-xl font-semibold border-2 border-red-400 text-red-500 hover:bg-red-50 transition-all flex items-center gap-2 shrink-0"
+                className="mt-2 px-6 py-3 rounded-xl text-base font-semibold border-2 border-red-400 text-red-500 hover:bg-red-50 transition-all flex items-center gap-2 shrink-0"
               >
-                <XCircle size={22} className="shrink-0" />
+                <XCircle size={18} className="shrink-0" />
                 <span>Cancel</span>
               </button>
             )}
@@ -93,10 +91,10 @@ function CreateStoreForm() {
 
       {(loading || logs.length > 0) && (
         <div className="col-span-3 bg-[#0B1120] rounded-0xl border border-slate-800 overflow-hidden">
-          <div className="px-8 py-5 border-slate-800 flex items-center justify-between">
+          <div className="px-6 py-4 border-slate-800 flex items-center justify-between">
             <div>
-              <h3 className="text-2xl font-bold text-black">Live Logs</h3>
-              <p className="text-slate-400 mt-1 text-sm">Real-time store creation progress</p>
+              <h3 className="text-base font-bold text-white">Live Logs</h3>
+              <p className="text-slate-400 mt-0.5 text-xs">Real-time store creation progress</p>
             </div>
             <div className="flex items-center gap-2 text-sm font-medium">
               {loading ? (
@@ -148,12 +146,12 @@ function CreateStoreForm() {
 
       {result && (
         <div className="col-span-3 bg-[#0B1120] rounded-0xl border border-slate-800 overflow-hidden">
-          <div className="px-8 py-5  border-slate-800 flex items-center justify-between">
+          <div className="px-6 py-4 border-slate-800 flex items-center justify-between">
             <div>
-              <h3 className="text-2xl font-bold text-black">
+              <h3 className="text-base font-bold text-white">
                 Environment Details
               </h3>
-              <p className="text-slate-400 mt-1 text-sm">
+              <p className="text-slate-400 mt-0.5 text-xs">
                 Generated store credentials & configuration
               </p>
             </div>

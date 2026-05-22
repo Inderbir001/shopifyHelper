@@ -5,9 +5,9 @@ import { setupMarketsApi } from "../../api/storeSetupApi";
 function SetupMarketsPage() {
   return (
     <MainLayout>
-      <div className="mb-10">
-        <h1 className="text-5xl font-bold text-gray-800">Setup Markets</h1>
-        <p className="text-gray-500 mt-3 text-lg">Configure Domestic and International markets</p>
+      <div className="mb-6">
+        <h1 className="text-3xl font-bold text-gray-800">Setup Markets</h1>
+        <p className="text-gray-500 mt-1 text-sm">Configure Domestic and International markets</p>
       </div>
       <StoreSetupForm
         title="Setup Markets"

@@ -5,9 +5,9 @@ import { setupShippingApi } from "../../api/storeSetupApi";
 function SetupShippingPage() {
   return (
     <MainLayout>
-      <div className="mb-10">
-        <h1 className="text-5xl font-bold text-gray-800">Setup Shipping</h1>
-        <p className="text-gray-500 mt-3 text-lg">Create US Warehouse location + DOM and INTL shipping zones</p>
+      <div className="mb-6">
+        <h1 className="text-3xl font-bold text-gray-800">Setup Shipping</h1>
+        <p className="text-gray-500 mt-1 text-sm">Create US Warehouse location + DOM and INTL shipping zones</p>
       </div>
       <StoreSetupForm
         title="Setup Shipping"
