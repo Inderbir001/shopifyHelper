@@ -11,6 +11,7 @@ import {
   ArrowRight,
   Inbox,
   Copy,
+  Sliders,
 } from "lucide-react";
 import MainLayout from "../components/layout/MainLayout";
 import { useActivity } from "../context/ActivityContext";
@@ -78,6 +79,15 @@ const quickActions = [
     light: "bg-pink-50 text-pink-600 border-pink-100",
     dark: "dark:bg-pink-900/20 dark:text-pink-400 dark:border-pink-900/40",
     iconBg: "bg-pink-100 text-pink-600 dark:bg-pink-900/30 dark:text-pink-400",
+  },
+  {
+    label: "Custom Order",
+    description: "Build an order with full field control",
+    path: "/orders/custom",
+    icon: Sliders,
+    light: "bg-orange-50 text-orange-600 border-orange-100",
+    dark: "dark:bg-orange-900/20 dark:text-orange-400 dark:border-orange-900/40",
+    iconBg: "bg-orange-100 text-orange-600 dark:bg-orange-900/30 dark:text-orange-400",
   },
 ];
 

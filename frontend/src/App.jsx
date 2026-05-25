@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Dashboard from "./pages/Dashboard";
 import Orders from "./pages/Orders";
 import DuplicateOrderPage from "./pages/DuplicateOrderPage";
+import CustomOrderPage from "./pages/CustomOrderPage";
 import Products from "./pages/Products";
 import Settings from "./pages/Settings";
 import CreateStore from "./pages/CreateStore";
@@ -27,6 +28,7 @@ function App() {
 
         <Route path="/orders" element={<Orders />} />
         <Route path="/orders/duplicate" element={<DuplicateOrderPage />} />
+        <Route path="/orders/custom" element={<CustomOrderPage />} />
 
         <Route path="/products" element={<Products />} />
 

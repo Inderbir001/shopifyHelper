@@ -15,6 +15,7 @@ import { useState, useEffect } from "react";
 const orderItems = [
   { name: "Create Order",    path: "/orders" },
   { name: "Duplicate Order", path: "/orders/duplicate" },
+  { name: "Custom Order",    path: "/orders/custom" },
 ];
 
 const storeSetupItems = [
@@ -161,7 +162,7 @@ function Sidebar() {
 
       <div className="p-5">
         <div className="bg-white/5 border border-white/10 rounded-2xl p-4">
-          <h3 className="font-semibold">version 1.0.25</h3>
+          <h3 className="font-semibold">version 1.0.26</h3>
           <p className="text-sm text-gray-400">by Inderbir Singh</p>
         </div>
       </div>
