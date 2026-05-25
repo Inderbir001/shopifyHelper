@@ -1,4 +1,4 @@
-import { createOrderService } from "../services/orderService.js";
+import { createOrderService, duplicateOrderService } from "../services/orderService.js";
 
 export const createOrder = async (req, res) => {
   try {
@@ -8,6 +8,20 @@ export const createOrder = async (req, res) => {
   } catch (error) {
     const shopifyError = error.response?.data;
     console.error("Order creation failed:", shopifyError ?? error.message);
+    res.status(error.response?.status ?? 500).json({
+      error: shopifyError ?? error.message,
+    });
+  }
+};
+
+export const duplicateOrder = async (req, res) => {
+  try {
+    const { storeUrl, token, orderName } = req.body;
+    const result = await duplicateOrderService(orderName, storeUrl, token);
+    res.json(result);
+  } catch (error) {
+    const shopifyError = error.response?.data;
+    console.error("Order duplication failed:", shopifyError ?? error.message);
     res.status(error.response?.status ?? 500).json({
       error: shopifyError ?? error.message,
     });

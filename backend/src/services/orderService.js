@@ -5,8 +5,37 @@ export const createOrderService = async (orderData, storeUrl, token) => {
     storeUrl || process.env.SHOPIFY_STORE,
     token || process.env.SHOPIFY_ACCESS_TOKEN
   );
-  const response = await shopifyApi.post("/orders.json", {
-    order: orderData,
-  });
+  const response = await shopifyApi.post("/orders.json", { order: orderData });
   return response.data;
+};
+
+export const duplicateOrderService = async (orderName, storeUrl, token) => {
+  const shopifyApi = createShopifyApi(storeUrl, token);
+
+  // Fetch source order by name (with or without #)
+  const name = orderName.toString().startsWith("#") ? orderName : `#${orderName}`;
+  const search = await shopifyApi.get(
+    `/orders.json?name=${encodeURIComponent(name)}&status=any`
+  );
+  const orders = search.data.orders;
+  if (!orders?.length) throw new Error(`Order ${name} not found`);
+
+  const src = orders[0];
+
+  const newOrder = {
+    line_items: src.line_items.map((item) => ({
+      variant_id: item.variant_id,
+      quantity: item.quantity,
+      price: item.price,
+    })),
+    shipping_address: src.shipping_address,
+    billing_address: src.billing_address,
+    email: src.email,
+    financial_status: "paid",
+    send_receipt: false,
+    send_fulfillment_receipt: false,
+  };
+
+  const response = await shopifyApi.post("/orders.json", { order: newOrder });
+  return { source: src, order: response.data.order };
 };

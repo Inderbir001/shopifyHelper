@@ -10,6 +10,7 @@ import {
   Activity,
   ArrowRight,
   Inbox,
+  Copy,
 } from "lucide-react";
 import MainLayout from "../components/layout/MainLayout";
 import { useActivity } from "../context/ActivityContext";
@@ -23,6 +24,15 @@ const quickActions = [
     light: "bg-violet-50 text-violet-600 border-violet-100",
     dark: "dark:bg-violet-900/20 dark:text-violet-400 dark:border-violet-900/40",
     iconBg: "bg-violet-100 text-violet-600 dark:bg-violet-900/30 dark:text-violet-400",
+  },
+  {
+    label: "Duplicate Order",
+    description: "Re-create an existing order",
+    path: "/orders/duplicate",
+    icon: Copy,
+    light: "bg-purple-50 text-purple-600 border-purple-100",
+    dark: "dark:bg-purple-900/20 dark:text-purple-400 dark:border-purple-900/40",
+    iconBg: "bg-purple-100 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400",
   },
   {
     label: "Create Store",

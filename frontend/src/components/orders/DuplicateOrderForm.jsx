@@ -1,7 +1,6 @@
 import { useState, useRef } from "react";
-import { Hash, Loader2, CheckCircle2, XCircle, ChevronLeft, ChevronRight } from "lucide-react";
-import { createOrderApi } from "../../api/orderApi";
-import { buildOrderPayload, ADDRESS_PRESETS } from "../../utils/orderPayload";
+import { Hash, Loader2, CheckCircle2, XCircle, ChevronLeft, ChevronRight, Copy } from "lucide-react";
+import { duplicateOrderApi } from "../../api/orderApi";
 import { useActivity } from "../../context/ActivityContext";
 import { useToast } from "../../context/ToastContext";
 
@@ -10,17 +9,14 @@ const MAX_RETRIES = 50;
 const ORDER_INTERVAL_MS = 16_000;
 const PAGE_SIZE = 20;
 
-function OrderForm() {
+function DuplicateOrderForm() {
   const { addActivity } = useActivity();
   const { showToast } = useToast();
 
-  const [storeUrl, setStoreUrl]   = useState(() => localStorage.getItem("order_storeUrl") ?? "");
-  const [token, setToken]         = useState(() => localStorage.getItem("order_token") ?? "");
-  const [variantId, setVariantId] = useState(() => localStorage.getItem("order_variantId") ?? "");
-  const [quantity, setQuantity]   = useState(1);
-  const [price, setPrice]         = useState(10);
-  const [addressPreset, setAddressPreset] = useState("US");
-  const [orderCount, setOrderCount]       = useState(1);
+  const [storeUrl, setStoreUrl] = useState(() => localStorage.getItem("order_storeUrl") ?? "");
+  const [token, setToken]       = useState(() => localStorage.getItem("order_token") ?? "");
+  const [orderName, setOrderName] = useState("");
+  const [count, setCount]         = useState(1);
 
   const [loading, setLoading]             = useState(false);
   const [progress, setProgress]           = useState(null);
@@ -33,20 +29,17 @@ function OrderForm() {
     e.preventDefault();
     cancelRef.current = false;
     setLoading(true);
-    setProgress({ done: 0, total: orderCount });
+    setProgress({ done: 0, total: count });
     setCreatedOrders([]);
     setPage(1);
 
-    const orderData = buildOrderPayload({ variantId, quantity, price, addressPreset });
-    const payload = { ...orderData, storeUrl, token };
     let done = 0;
 
     try {
-      for (let i = 0; i < orderCount; i++) {
+      for (let i = 0; i < count; i++) {
         if (cancelRef.current) break;
 
-        // Flat 16s interval between orders (matching proven CLI timing)
-        if (orderCount > 5 && i > 0) await sleep(ORDER_INTERVAL_MS);
+        if (count > 5 && i > 0) await sleep(ORDER_INTERVAL_MS);
 
         if (cancelRef.current) break;
 
@@ -55,7 +48,7 @@ function OrderForm() {
         for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
           if (cancelRef.current) break;
           try {
-            result = await createOrderApi(payload);
+            result = await duplicateOrderApi(storeUrl, token, orderName);
             break;
           } catch (err) {
             if (attempt === MAX_RETRIES) throw err;
@@ -71,6 +64,7 @@ function OrderForm() {
           {
             id: order.id,
             name: order.name,
+            source: result.source?.name ?? orderName,
             status: order.financial_status,
             total: order.total_price,
             currency: order.currency,
@@ -78,14 +72,14 @@ function OrderForm() {
           },
           ...prev,
         ]);
-        setProgress({ done, total: orderCount });
-        addActivity("order", `${order.name} on ${storeUrl} — qty ${quantity}`);
+        setProgress({ done, total: count });
+        addActivity("order", `Duplicated ${orderName} → ${order.name} on ${storeUrl}`);
       }
 
-      showToast(`${done} order${done !== 1 ? "s" : ""} created!`, "success");
+      showToast(`${done} order${done !== 1 ? "s" : ""} duplicated!`, "success");
     } catch (error) {
       console.log(error);
-      showToast("Failed to create order. Check console for details.", "error");
+      showToast(error.response?.data?.error ?? "Failed to duplicate order.", "error");
     } finally {
       setLoading(false);
       setProgress(null);
@@ -100,17 +94,16 @@ function OrderForm() {
     return "bg-gray-100 text-gray-600 dark:bg-slate-700 dark:text-slate-400";
   };
 
-  // Pagination
   const totalPages = Math.max(1, Math.ceil(createdOrders.length / PAGE_SIZE));
-  const safePage = Math.min(page, totalPages);
+  const safePage   = Math.min(page, totalPages);
   const pageOrders = createdOrders.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE);
 
   return (
     <div className="grid grid-cols-3 gap-6">
       <div className="col-span-3 bg-white dark:bg-slate-800 rounded-3xl shadow-sm border border-gray-200 dark:border-slate-700 p-6">
         <div className="mb-5">
-          <h2 className="text-2xl font-bold text-gray-800 dark:text-slate-100">Create New Order</h2>
-          <p className="text-gray-500 dark:text-slate-400 mt-0.5 text-sm">Fill order details below</p>
+          <h2 className="text-2xl font-bold text-gray-800 dark:text-slate-100">Duplicate Order</h2>
+          <p className="text-gray-500 dark:text-slate-400 mt-0.5 text-sm">Re-create an existing order with the same details</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -130,47 +123,22 @@ function OrderForm() {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="font-semibold text-gray-700 dark:text-slate-300 block mb-1.5 text-sm">Variant ID</label>
-              <input type="number" value={variantId}
-                onChange={(e) => { setVariantId(e.target.value); localStorage.setItem("order_variantId", e.target.value); }}
-                className={inputCls} />
+              <label className="font-semibold text-gray-700 dark:text-slate-300 block mb-1.5 text-sm">Order Number</label>
+              <input type="text" placeholder="#1001 or 1001" value={orderName}
+                onChange={(e) => setOrderName(e.target.value)}
+                disabled={loading}
+                className={inputCls} required />
             </div>
 
             <div>
-              <label className="font-semibold text-gray-700 dark:text-slate-300 block mb-1.5 text-sm">Quantity</label>
-              <div className="relative">
-                <Hash className="absolute left-3 top-2.5 text-gray-400 dark:text-slate-500" size={16} />
-                <input type="number" value={quantity} onChange={(e) => setQuantity(e.target.value)}
-                  className={`${inputCls} pl-9`} />
-              </div>
-            </div>
-
-            <div>
-              <label className="font-semibold text-gray-700 dark:text-slate-300 block mb-1.5 text-sm">Price</label>
-              <input type="number" value={price} onChange={(e) => setPrice(e.target.value)} className={inputCls} />
-            </div>
-
-            <div>
-              <label className="font-semibold text-gray-700 dark:text-slate-300 block mb-1.5 text-sm">Shipping Address</label>
-              <select value={addressPreset} onChange={(e) => setAddressPreset(e.target.value)}
-                className={`${inputCls} cursor-pointer`}>
-                {Object.entries(ADDRESS_PRESETS).map(([key, preset]) => (
-                  <option key={key} value={key}>
-                    {preset.label} — {preset.address1}, {preset.city}, {preset.zip}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="col-span-2">
               <label className="font-semibold text-gray-700 dark:text-slate-300 block mb-1.5 text-sm">
-                Number of Orders
-                <span className="ml-2 font-normal text-gray-400 dark:text-slate-500 text-xs">(&gt;5 orders paced at 16s each)</span>
+                Times to Duplicate
+                <span className="ml-2 font-normal text-gray-400 dark:text-slate-500 text-xs">(&gt;5 paced at 16s each)</span>
               </label>
               <div className="relative">
                 <Hash className="absolute left-3 top-2.5 text-gray-400 dark:text-slate-500" size={16} />
-                <input type="number" min={1} max={500} value={orderCount}
-                  onChange={(e) => setOrderCount(Math.max(1, parseInt(e.target.value) || 1))}
+                <input type="number" min={1} max={500} value={count}
+                  onChange={(e) => setCount(Math.max(1, parseInt(e.target.value) || 1))}
                   className={`${inputCls} pl-9`} />
               </div>
             </div>
@@ -182,10 +150,13 @@ function OrderForm() {
               {loading ? (
                 <>
                   <Loader2 className="btn-spinner shrink-0" size={20} />
-                  <span>{progress ? `Creating ${progress.done + 1} of ${progress.total}...` : "Creating..."}</span>
+                  <span>{progress ? `Duplicating ${progress.done + 1} of ${progress.total}...` : "Duplicating..."}</span>
                 </>
               ) : (
-                `Create ${orderCount > 1 ? `${orderCount} Orders` : "Order"}`
+                <>
+                  <Copy size={18} />
+                  <span>Duplicate {count > 1 ? `${count}×` : ""} Order</span>
+                </>
               )}
             </button>
 
@@ -204,7 +175,7 @@ function OrderForm() {
       {loading && progress && (
         <div className="col-span-3 bg-white dark:bg-slate-800 rounded-2xl border border-gray-200 dark:border-slate-700 p-4">
           <div className="flex justify-between text-xs text-gray-500 dark:text-slate-400 mb-2">
-            <span>{progress.done} of {progress.total} orders created</span>
+            <span>{progress.done} of {progress.total} duplicated</span>
             <span>{Math.round((progress.done / progress.total) * 100)}%</span>
           </div>
           <div className="h-2 bg-gray-100 dark:bg-slate-700 rounded-full overflow-hidden">
@@ -216,12 +187,12 @@ function OrderForm() {
         </div>
       )}
 
-      {/* Created orders list */}
+      {/* Duplicated orders list */}
       {createdOrders.length > 0 && (
         <div className="col-span-3 bg-white dark:bg-slate-800 rounded-3xl shadow-sm border border-gray-200 dark:border-slate-700 overflow-hidden">
           <div className="px-6 py-4 border-b border-gray-100 dark:border-slate-700 flex items-center justify-between">
             <div>
-              <h3 className="text-base font-bold text-gray-800 dark:text-slate-100">Created Orders</h3>
+              <h3 className="text-base font-bold text-gray-800 dark:text-slate-100">Duplicated Orders</h3>
               <p className="text-xs text-gray-400 dark:text-slate-500 mt-0.5">{createdOrders.length} order{createdOrders.length !== 1 ? "s" : ""} this session</p>
             </div>
             <div className="flex items-center gap-2 text-emerald-500">
@@ -235,7 +206,8 @@ function OrderForm() {
               <thead>
                 <tr className="border-b border-gray-100 dark:border-slate-700">
                   <th className="text-left px-6 py-3 text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wide">#</th>
-                  <th className="text-left px-6 py-3 text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wide">Order</th>
+                  <th className="text-left px-6 py-3 text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wide">New Order</th>
+                  <th className="text-left px-6 py-3 text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wide">Source</th>
                   <th className="text-left px-6 py-3 text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wide">Status</th>
                   <th className="text-left px-6 py-3 text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wide">Total</th>
                   <th className="text-left px-6 py-3 text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wide">Time</th>
@@ -248,6 +220,7 @@ function OrderForm() {
                     <tr key={order.id} className="border-b border-gray-50 dark:border-slate-700/50 hover:bg-gray-50 dark:hover:bg-slate-700/30 transition-colors">
                       <td className="px-6 py-3 text-xs text-gray-400 dark:text-slate-500">{createdOrders.length - globalIdx}</td>
                       <td className="px-6 py-3 font-semibold text-gray-800 dark:text-slate-100">{order.name}</td>
+                      <td className="px-6 py-3 text-gray-500 dark:text-slate-400 text-xs">{order.source}</td>
                       <td className="px-6 py-3">
                         <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${statusColor(order.status)}`}>
                           {order.status}
@@ -268,31 +241,18 @@ function OrderForm() {
                 Page {safePage} of {totalPages} — {createdOrders.length} total
               </p>
               <div className="flex items-center gap-2">
-                <button
-                  onClick={() => setPage((p) => Math.max(1, p - 1))}
-                  disabled={safePage === 1}
-                  className="p-1.5 rounded-lg border border-gray-200 dark:border-slate-600 text-gray-500 dark:text-slate-400 hover:border-purple-400 hover:text-purple-500 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
-                >
+                <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={safePage === 1}
+                  className="p-1.5 rounded-lg border border-gray-200 dark:border-slate-600 text-gray-500 dark:text-slate-400 hover:border-purple-400 hover:text-purple-500 disabled:opacity-30 disabled:cursor-not-allowed transition-all">
                   <ChevronLeft size={14} />
                 </button>
                 {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
-                  <button
-                    key={p}
-                    onClick={() => setPage(p)}
-                    className={`w-7 h-7 rounded-lg text-xs font-semibold transition-all ${
-                      p === safePage
-                        ? "bg-purple-600 text-white"
-                        : "border border-gray-200 dark:border-slate-600 text-gray-500 dark:text-slate-400 hover:border-purple-400 hover:text-purple-500"
-                    }`}
-                  >
+                  <button key={p} onClick={() => setPage(p)}
+                    className={`w-7 h-7 rounded-lg text-xs font-semibold transition-all ${p === safePage ? "bg-purple-600 text-white" : "border border-gray-200 dark:border-slate-600 text-gray-500 dark:text-slate-400 hover:border-purple-400 hover:text-purple-500"}`}>
                     {p}
                   </button>
                 ))}
-                <button
-                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                  disabled={safePage === totalPages}
-                  className="p-1.5 rounded-lg border border-gray-200 dark:border-slate-600 text-gray-500 dark:text-slate-400 hover:border-purple-400 hover:text-purple-500 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
-                >
+                <button onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={safePage === totalPages}
+                  className="p-1.5 rounded-lg border border-gray-200 dark:border-slate-600 text-gray-500 dark:text-slate-400 hover:border-purple-400 hover:text-purple-500 disabled:opacity-30 disabled:cursor-not-allowed transition-all">
                   <ChevronRight size={14} />
                 </button>
               </div>
@@ -304,4 +264,4 @@ function OrderForm() {
   );
 }
 
-export default OrderForm;
+export default DuplicateOrderForm;

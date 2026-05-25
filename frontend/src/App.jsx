@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Dashboard from "./pages/Dashboard";
 import Orders from "./pages/Orders";
+import DuplicateOrderPage from "./pages/DuplicateOrderPage";
 import Products from "./pages/Products";
 import Settings from "./pages/Settings";
 import CreateStore from "./pages/CreateStore";
@@ -25,6 +26,7 @@ function App() {
         <Route path="/" element={<Dashboard />} />
 
         <Route path="/orders" element={<Orders />} />
+        <Route path="/orders/duplicate" element={<DuplicateOrderPage />} />
 
         <Route path="/products" element={<Products />} />
 
