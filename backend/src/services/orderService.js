@@ -9,6 +9,24 @@ export const createOrderService = async (orderData, storeUrl, token) => {
   return response.data;
 };
 
+export const fetchOrderService = async (orderId, storeUrl, token) => {
+  const shopifyApi = createShopifyApi(storeUrl, token);
+
+  const isNumeric = /^\d+$/.test(orderId.toString().trim());
+  if (isNumeric) {
+    const response = await shopifyApi.get(`/orders/${orderId}.json`);
+    return response.data.order;
+  }
+
+  const name = orderId.toString().trim().startsWith("#") ? orderId : `#${orderId}`;
+  const search = await shopifyApi.get(
+    `/orders.json?name=${encodeURIComponent(name)}&status=any`
+  );
+  const orders = search.data.orders;
+  if (!orders?.length) throw new Error(`Order ${name} not found`);
+  return orders[0];
+};
+
 export const duplicateOrderService = async (orderName, storeUrl, token) => {
   const shopifyApi = createShopifyApi(storeUrl, token);
 

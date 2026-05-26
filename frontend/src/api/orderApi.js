@@ -9,3 +9,8 @@ export const duplicateOrderApi = async (storeUrl, token, orderName) => {
   const response = await api.post("api/orders/duplicate", { storeUrl, token, orderName });
   return response.data;
 };
+
+export const fetchOrderApi = async (storeUrl, token, orderId) => {
+  const response = await api.post("api/orders/fetch", { storeUrl, token, orderId });
+  return response.data;
+};

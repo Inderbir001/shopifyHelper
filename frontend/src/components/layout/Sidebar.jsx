@@ -16,6 +16,7 @@ const orderItems = [
   { name: "Create Order",    path: "/orders" },
   { name: "Duplicate Order", path: "/orders/duplicate" },
   { name: "Custom Order",    path: "/orders/custom" },
+  { name: "Fetch Order",     path: "/orders/fetch" },
 ];
 
 const storeSetupItems = [

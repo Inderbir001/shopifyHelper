@@ -12,6 +12,7 @@ import {
   Inbox,
   Copy,
   Sliders,
+  Search,
 } from "lucide-react";
 import MainLayout from "../components/layout/MainLayout";
 import { useActivity } from "../context/ActivityContext";
@@ -88,6 +89,15 @@ const quickActions = [
     light: "bg-orange-50 text-orange-600 border-orange-100",
     dark: "dark:bg-orange-900/20 dark:text-orange-400 dark:border-orange-900/40",
     iconBg: "bg-orange-100 text-orange-600 dark:bg-orange-900/30 dark:text-orange-400",
+  },
+  {
+    label: "Fetch Order",
+    description: "Look up any order and view its JSON",
+    path: "/orders/fetch",
+    icon: Search,
+    light: "bg-cyan-50 text-cyan-600 border-cyan-100",
+    dark: "dark:bg-cyan-900/20 dark:text-cyan-400 dark:border-cyan-900/40",
+    iconBg: "bg-cyan-100 text-cyan-600 dark:bg-cyan-900/30 dark:text-cyan-400",
   },
 ];
 
